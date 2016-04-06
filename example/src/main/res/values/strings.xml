@@ -1,3 +1,10 @@
 <resources>
-  <string name="app_name">My Application</string>
+  <string name="app_name">Language Translation Example</string>
+  <string name="translation_label">Translation:</string>
+  <string name="translate">translate</string>
+  <string name="input_hint">enter text</string>
+  <string name="target_language">Target Language</string>
+  <string name="spanish">Spanish</string>
+  <string name="french">French</string>
+  <string name="italian">Italian</string>
 </resources>
