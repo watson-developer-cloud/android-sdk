@@ -1,6 +1,5 @@
 package com.ibm.watson.developer_cloud.android.myapplication;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -11,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.ibm.watson.developer_cloud.language_translation.v2.LanguageTranslation;
 import com.ibm.watson.developer_cloud.language_translation.v2.model.TranslationResult;
+import com.ibm.watson.developer_cloud.service.ServiceCallback;
 
 public class MainActivity extends AppCompatActivity {
   private RadioGroup targetLanguage;
@@ -53,30 +53,33 @@ public class MainActivity extends AppCompatActivity {
 
     translate.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        new TranslationAsyncTask().execute(input.getText().toString());
+        translationService.translate(input.getText().toString(), "en", selectedTargetLanguage, null)
+            .enqueue(new ServiceCallback<TranslationResult>() {
+              @Override public void onResponse(TranslationResult result) {
+                showTranslation(result.getFirstTranslation());
+              }
+
+              @Override public void onFailure(final Exception e) {
+                showError(e);
+              }
+            });
       }
     });
   }
 
-  class TranslationAsyncTask extends AsyncTask<String, Void, TranslationResult> {
-    Exception e;
-
-    @Override protected TranslationResult doInBackground(String... params) {
-      try {
-        return translationService.translate(params[0], "en", selectedTargetLanguage);
-      } catch (Exception e) {
-        this.e = e;
-        return null;
+  private void showTranslation(final String translation) {
+    runOnUiThread(new Runnable() {
+      @Override public void run() {
+        translatedText.setText(translation);
       }
-    }
+    });
+  }
 
-    @Override protected void onPostExecute(TranslationResult result) {
-      super.onPostExecute(result);
-      if (result != null) {
-        translatedText.setText(result.getTranslations().get(0).getTranslation());
-      } else {
+  private void showError(final Exception e) {
+    runOnUiThread(new Runnable() {
+      @Override public void run() {
         Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
       }
-    }
+    });
   }
 }
