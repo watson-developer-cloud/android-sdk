@@ -2,12 +2,12 @@ package com.ibm.watson.developer_cloud.android.myapplication;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatImageButton;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,15 +19,20 @@ import com.ibm.watson.developer_cloud.speech_to_text.v1.RecognizeOptions;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.SpeechToText;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechResults;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.websocket.RecognizeDelegate;
+import com.ibm.watson.developer_cloud.text_to_speech.v1.TextToSpeech;
+import com.ibm.watson.developer_cloud.text_to_speech.v1.model.Voice;
+import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity {
   private RadioGroup targetLanguage;
   private EditText input;
-  private AppCompatImageButton mic;
+  private ImageButton mic;
   private Button translate;
+  private ImageButton play;
   private TextView translatedText;
 
   private SpeechToText speechService;
+  private TextToSpeech textService;
   private LanguageTranslation translationService;
   private String selectedTargetLanguage = "es";
 
@@ -36,12 +41,14 @@ public class MainActivity extends AppCompatActivity {
     setContentView(R.layout.activity_main);
 
     speechService = initSpeechToTextService();
+    textService = initTextToSpeechService();
     translationService = initLanguageTranslationService();
 
     targetLanguage = (RadioGroup) findViewById(R.id.target_language);
     input = (EditText) findViewById(R.id.input);
-    mic = (AppCompatImageButton) findViewById(R.id.mic);
+    mic = (ImageButton) findViewById(R.id.mic);
     translate = (Button) findViewById(R.id.translate);
+    play = (ImageButton) findViewById(R.id.play);
     translatedText = (TextView) findViewById(R.id.translated_text);
 
     targetLanguage.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -60,7 +67,15 @@ public class MainActivity extends AppCompatActivity {
       }
     });
 
-    input.addTextChangedListener(new EmptyTextWatcher());
+    input.addTextChangedListener(new EmptyTextWatcher() {
+      @Override public void onEmpty(boolean empty) {
+        if (empty) {
+          translate.setEnabled(false);
+        } else {
+          translate.setEnabled(true);
+        }
+      }
+    });
 
     mic.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
@@ -88,6 +103,33 @@ public class MainActivity extends AppCompatActivity {
               }
 
               @Override public void onFailure(final Exception e) {
+                showError(e);
+              }
+            });
+      }
+    });
+
+    translate.addTextChangedListener(new EmptyTextWatcher() {
+      @Override public void onEmpty(boolean empty) {
+        if (empty) {
+          play.setEnabled(false);
+        } else {
+          play.setEnabled(true);
+        }
+      }
+    });
+
+    play.setEnabled(false);
+
+    play.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        textService.synthesize(translatedText.getText().toString(), Voice.EN_LISA)
+            .enqueue(new ServiceCallback<InputStream>() {
+              @Override public void onResponse(InputStream stream) {
+                playTranslation(stream);
+              }
+
+              @Override public void onFailure(Exception e) {
                 showError(e);
               }
             });
@@ -128,10 +170,22 @@ public class MainActivity extends AppCompatActivity {
     });
   }
 
+  private void playTranslation(InputStream stream) {
+    // look @ example from WeaManager#synthesize
+  }
+
   private SpeechToText initSpeechToTextService() {
     SpeechToText service = new SpeechToText();
     String username = getString(R.string.speech_text_username);
     String password = getString(R.string.speech_text_password);
+    service.setUsernameAndPassword(username, password);
+    return service;
+  }
+
+  private TextToSpeech initTextToSpeechService() {
+    TextToSpeech service = new TextToSpeech();
+    String username = getString(R.string.text_speech_username);
+    String password = getString(R.string.text_speech_password);
     service.setUsernameAndPassword(username, password);
     return service;
   }
@@ -173,17 +227,23 @@ public class MainActivity extends AppCompatActivity {
     }
   }
 
-  private class EmptyTextWatcher implements TextWatcher {
+  private abstract class EmptyTextWatcher implements TextWatcher {
+    private boolean isEmpty = true; // assumes text is initially empty
+
     @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
     @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
       if (s.length() == 0) {
-        translate.setEnabled(false);
-      } else if (!translate.isEnabled()) {
-        translate.setEnabled(true);
+        isEmpty = true;
+        onEmpty(true);
+      } else if (isEmpty) {
+        isEmpty = false;
+        onEmpty(false);
       }
     }
 
     @Override public void afterTextChanged(Editable s) {}
+
+    public abstract void onEmpty(boolean empty);
   }
 }
