@@ -1,0 +1,78 @@
+package com.ibm.watson.developer_cloud.android.library.audio;
+
+import android.util.Log;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+
+/**
+ * Captures raw audio data from the microphone and exposes it via an {@code InputStream}. Make sure
+ * {@link #close()} gets called in order to free its resources appropriately.
+ */
+public final class MicrophoneInputStream extends InputStream implements AudioConsumer {
+  private static final String TAG = MicrophoneInputStream.class.getName();
+
+  public static final String CONTENT_TYPE = "audio/l16;rate=16000";
+
+  private final MicrophoneCaptureThread captureThread;
+  private final PipedOutputStream os;
+  private final PipedInputStream is;
+
+  private AmplitudeListener amplitudeListener;
+
+  public MicrophoneInputStream() {
+    captureThread = new MicrophoneCaptureThread(this);
+    os = new PipedOutputStream();
+    is = new PipedInputStream();
+    try {
+      is.connect(os);
+    } catch (IOException e) {
+      Log.e(TAG, e.getMessage());
+    }
+    captureThread.start();
+  }
+
+  @Override public int read() throws IOException {
+    throw new UnsupportedOperationException("Call read(byte[]) or read(byte[], int, int)");
+  }
+
+  @Override public int read(byte[] buffer) throws IOException {
+    return read(buffer, 0, buffer.length);
+  }
+
+  @Override public int read(byte[] buffer, int offset, int length) throws IOException {
+    return is.read(buffer, offset, length);
+  }
+
+  @Override public void close() throws IOException {
+    captureThread.end();
+    os.close();
+    is.close();
+  }
+
+  @Override public void consume(byte[] data, double amplitude, double volume) {
+    if (amplitudeListener != null) {
+      amplitudeListener.onSample(amplitude, volume);
+    }
+
+    try {
+      os.write(data);
+    } catch (IOException e) {
+      Log.e(TAG, e.getMessage());
+    }
+  }
+
+  /**
+   * Receive amplitude (and volume) data per sample from the {@code MicrophoneInputStream}.
+   *
+   * @param listener Notified per sample with amplitude and volume data.
+   */
+  public void setOnAmplitudeListener(AmplitudeListener listener) {
+    amplitudeListener = listener;
+  }
+
+  public String getContentType() {
+    return "audio/l16;rate=16000";
+  }
+}
