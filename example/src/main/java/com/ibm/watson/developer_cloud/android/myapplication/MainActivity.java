@@ -2,6 +2,8 @@ package com.ibm.watson.developer_cloud.android.myapplication;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -46,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
       }
     });
 
+    input.addTextChangedListener(new EmptyTextWatcher());
+
     translationService = new LanguageTranslation();
     String username = getString(R.string.language_translation_username);
     String password = getString(R.string.language_translation_password);
@@ -53,13 +57,14 @@ public class MainActivity extends AppCompatActivity {
 
     translate.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        translationService.translate(input.getText().toString(), "en", selectedTargetLanguage, null)
+        translationService.translate(input.getText().toString(), "en", selectedTargetLanguage)
             .enqueue(new ServiceCallback<TranslationResult>() {
               @Override public void onResponse(TranslationResult result) {
                 showTranslation(result.getFirstTranslation());
               }
 
               @Override public void onFailure(final Exception e) {
+                e.printStackTrace();
                 showError(e);
               }
             });
@@ -81,5 +86,19 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
       }
     });
+  }
+
+  private class EmptyTextWatcher implements TextWatcher {
+    @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+    @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+      if (s.length() == 0) {
+        translate.setEnabled(false);
+      } else if (!translate.isEnabled()) {
+        translate.setEnabled(true);
+      }
+    }
+
+    @Override public void afterTextChanged(Editable s) {}
   }
 }
