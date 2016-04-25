@@ -88,6 +88,10 @@ public final class MicrophoneInputStream extends InputStream implements AudioCon
     amplitudeListener = listener;
   }
 
+  /**
+   * Get the audio format from the {@code MicrophoneInputStream}
+   * @return audio/l16;rate=16000
+   */
   public String getContentType() {
     return "audio/l16;rate=16000";
   }
