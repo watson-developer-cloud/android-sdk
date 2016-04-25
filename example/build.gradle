@@ -10,6 +10,9 @@ android {
     targetSdkVersion 21
     versionCode 1
     versionName "1.0"
+
+    //Enable multidex support
+    multiDexEnabled true
   }
   buildTypes {
     release {
@@ -22,6 +25,8 @@ android {
 dependencies {
   compile fileTree(dir: 'libs', include: ['*.jar'])
   testCompile 'junit:junit:4.12'
-  compile 'com.android.support:appcompat-v7:23.2.1'
+  compile 'com.android.support:appcompat-v7:23.3.0'
+  compile 'com.android.support:multidex:1.0.0'
+  compile 'com.ibm.watson.developer_cloud:java-sdk:3.0.0-RC1'
   compile project(':library')
 }

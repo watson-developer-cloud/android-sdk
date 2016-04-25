@@ -12,13 +12,14 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.ibm.watson.developer_cloud.android.library.audio.MicrophoneInputStream;
+import com.ibm.watson.developer_cloud.http.ServiceCallback;
 import com.ibm.watson.developer_cloud.language_translation.v2.LanguageTranslation;
+import com.ibm.watson.developer_cloud.language_translation.v2.model.Language;
 import com.ibm.watson.developer_cloud.language_translation.v2.model.TranslationResult;
-import com.ibm.watson.developer_cloud.service.ServiceCallback;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.RecognizeOptions;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.SpeechToText;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechResults;
-import com.ibm.watson.developer_cloud.speech_to_text.v1.websocket.RecognizeDelegate;
+import com.ibm.watson.developer_cloud.speech_to_text.v1.websocket.BaseRecognizeCallback;
 import com.ibm.watson.developer_cloud.text_to_speech.v1.TextToSpeech;
 import com.ibm.watson.developer_cloud.text_to_speech.v1.model.Voice;
 import java.io.InputStream;
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
   private SpeechToText speechService;
   private TextToSpeech textService;
   private LanguageTranslation translationService;
-  private String selectedTargetLanguage = "es";
+  private Language selectedTargetLanguage = Language.ENGLISH;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -55,13 +56,13 @@ public class MainActivity extends AppCompatActivity {
       @Override public void onCheckedChanged(RadioGroup group, int checkedId) {
         switch (checkedId) {
           case R.id.spanish:
-            selectedTargetLanguage = "es";
+            selectedTargetLanguage = Language.ENGLISH;
             break;
           case R.id.french:
-            selectedTargetLanguage = "fr";
+            selectedTargetLanguage = Language.FRENCH;
             break;
           case R.id.italian:
-            selectedTargetLanguage = "it";
+            selectedTargetLanguage = Language.ITALIAN;
             break;
         }
       }
@@ -84,8 +85,24 @@ public class MainActivity extends AppCompatActivity {
         new Thread(new Runnable() {
           @Override public void run() {
             try {
-              speechService.recognizeUsingWebSockets(new MicrophoneInputStream(),
-                  getRecognizeOptions(), new MicrophoneRecognizeDelegate());
+              speechService.recognizeUsingWebSocket(new MicrophoneInputStream(),
+                  getRecognizeOptions(), new BaseRecognizeCallback() {
+
+                    @Override public void onTranscription(SpeechResults speechResults){
+                      String text = speechResults.getResults().get(0).getAlternatives().get(0).getTranscript();
+                      showMicText(text);
+                    }
+
+                    @Override public void onError(Exception e) {
+                      showError(e);
+                      enableMicButton();
+                    }
+
+                    @Override public void onDisconnected() {
+                      enableMicButton();
+                    }
+
+                  });
             } catch (Exception e) {
               showError(e);
             }
@@ -95,14 +112,15 @@ public class MainActivity extends AppCompatActivity {
     });
 
     translate.setOnClickListener(new View.OnClickListener() {
+
       @Override public void onClick(View v) {
-        translationService.translate(input.getText().toString(), "en", selectedTargetLanguage)
+        translationService.translate(input.getText().toString(), Language.ENGLISH, selectedTargetLanguage)
             .enqueue(new ServiceCallback<TranslationResult>() {
-              @Override public void onResponse(TranslationResult result) {
-                showTranslation(result.getFirstTranslation());
+              @Override public void onResponse(TranslationResult response) {
+                showTranslation(response.getFirstTranslation());
               }
 
-              @Override public void onFailure(final Exception e) {
+              @Override public void onFailure(Exception e) {
                 showError(e);
               }
             });
@@ -171,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void playTranslation(InputStream stream) {
-    // look @ example from WeaManager#synthesize
+
   }
 
   private SpeechToText initSpeechToTextService() {
@@ -199,32 +217,12 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private RecognizeOptions getRecognizeOptions() {
-    RecognizeOptions options = new RecognizeOptions();
+    RecognizeOptions.Builder options = new RecognizeOptions.Builder();
     options.continuous(true);
     options.contentType(MicrophoneInputStream.CONTENT_TYPE);
     options.interimResults(true);
     options.inactivityTimeout(2000);
-    return options;
-  }
-
-  private class MicrophoneRecognizeDelegate implements RecognizeDelegate {
-    @Override public void onMessage(SpeechResults speechResults) {
-      String text = speechResults.getResults().get(0).getAlternatives().get(0).getTranscript();
-      showMicText(text);
-    }
-
-    @Override public void onConnected() {
-
-    }
-
-    @Override public void onError(Exception e) {
-      showError(e);
-      enableMicButton();
-    }
-
-    @Override public void onDisconnected() {
-      enableMicButton();
-    }
+    return options.build();
   }
 
   private abstract class EmptyTextWatcher implements TextWatcher {
