@@ -16,15 +16,11 @@
 
 package com.ibm.watson.developer_cloud.android.myapplication;
 
-import android.media.AudioFormat;
-import android.media.AudioManager;
-import android.media.AudioTrack;
-import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,19 +29,15 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.ibm.watson.developer_cloud.android.library.audio.MicrophoneInputStream;
-import com.ibm.watson.developer_cloud.http.ServiceCallback;
+import com.ibm.watson.developer_cloud.android.library.audio.StreamPlayer;
 import com.ibm.watson.developer_cloud.language_translation.v2.LanguageTranslation;
 import com.ibm.watson.developer_cloud.language_translation.v2.model.Language;
-import com.ibm.watson.developer_cloud.language_translation.v2.model.TranslationResult;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.RecognizeOptions;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.SpeechToText;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechResults;
-import com.ibm.watson.developer_cloud.speech_to_text.v1.websocket.RecognizeCallback;
+import com.ibm.watson.developer_cloud.speech_to_text.v1.websocket.RecognizeDelegate;
 import com.ibm.watson.developer_cloud.text_to_speech.v1.TextToSpeech;
 import com.ibm.watson.developer_cloud.text_to_speech.v1.model.Voice;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity {
   private final String TAG = "MainActivity";
@@ -62,16 +54,7 @@ public class MainActivity extends AppCompatActivity {
   private LanguageTranslation translationService;
   private Language selectedTargetLanguage = Language.SPANISH;
 
-  private AudioTrack audioTrack;
-  private static final int RECORDER_BPP = 16;
-  private static final int RECORDER_SAMPLERATE = 48000;
-  private static final int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_STEREO;
-  private static final int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
-  private Thread recordingThread;
-  private int bufferSize;
-
-  private MediaPlayer mPlayer;
-  private int sampleRate;
+  private StreamPlayer player = new StreamPlayer();
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -121,8 +104,7 @@ public class MainActivity extends AppCompatActivity {
         new Thread(new Runnable() {
           @Override public void run() {
             try {
-              //FileInputStream audio = new FileInputStream(getResources().);
-              speechService.recognizeUsingWebSocket(new MicrophoneInputStream(),
+              speechService.recognizeUsingWebSockets(new MicrophoneInputStream(),
                   getRecognizeOptions(), new MicrophoneRecognizeDelegate());
             } catch (Exception e) {
               showError(e);
@@ -135,16 +117,7 @@ public class MainActivity extends AppCompatActivity {
     translate.setOnClickListener(new View.OnClickListener() {
 
       @Override public void onClick(View v) {
-        translationService.translate(input.getText().toString(), Language.ENGLISH, selectedTargetLanguage)
-            .enqueue(new ServiceCallback<TranslationResult>() {
-              @Override public void onResponse(TranslationResult response) {
-                showTranslation(response.getFirstTranslation());
-              }
-
-              @Override public void onFailure(Exception e) {
-                showError(e);
-              }
-            });
+        new TranslationTask().execute(input.getText().toString());
       }
     });
 
@@ -162,16 +135,7 @@ public class MainActivity extends AppCompatActivity {
 
     play.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        textService.synthesize(translatedText.getText().toString(), Voice.EN_LISA)
-            .enqueue(new ServiceCallback<InputStream>() {
-              @Override public void onResponse(InputStream stream) {
-                playTranscription(stream);
-              }
-
-              @Override public void onFailure(Exception e) {
-                showError(e);
-              }
-            });
+        new SynthesisTask().execute(translatedText.getText().toString());
       }
     });
   }
@@ -209,33 +173,12 @@ public class MainActivity extends AppCompatActivity {
     });
   }
 
-  private void playTranscription(InputStream stream) {
-        try {
-          byte[] data = convertStreamToByteArray(stream);
-          if (data.length > 28) {
-            sampleRate = readInt(data, 24);
-          }
-          int headSize = 44, metaDataSize = 48;
-          int destPos = headSize + metaDataSize;
-          int rawLength = data.length - destPos;
-          byte[] d = new byte[rawLength];
-          System.arraycopy(data, destPos, d, 0, rawLength);
-          initPlayer();
-          audioTrack.write(d, 0, d.length);
-          stream.close();
-          if (audioTrack != null && audioTrack.getState() != AudioTrack.STATE_UNINITIALIZED) {
-            audioTrack.release();
-          }
-        } catch (IOException e2) {
-          Log.e(TAG, e2.getMessage());
-        }
-  }
-
   private SpeechToText initSpeechToTextService() {
     SpeechToText service = new SpeechToText();
     String username = getString(R.string.speech_text_username);
     String password = getString(R.string.speech_text_password);
     service.setUsernameAndPassword(username, password);
+    service.setEndPoint("https://stream.watsonplatform.net/speech-to-text/api");
     return service;
   }
 
@@ -256,12 +199,13 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private RecognizeOptions getRecognizeOptions() {
-    RecognizeOptions.Builder options = new RecognizeOptions.Builder();
+    RecognizeOptions options = new RecognizeOptions();
     options.continuous(true);
     options.contentType(MicrophoneInputStream.CONTENT_TYPE);
+    options.model("en-US_BroadbandModel");
     options.interimResults(true);
     options.inactivityTimeout(2000);
-    return options.build();
+    return options;
   }
 
   private abstract class EmptyTextWatcher implements TextWatcher {
@@ -284,9 +228,9 @@ public class MainActivity extends AppCompatActivity {
     public abstract void onEmpty(boolean empty);
   }
 
-  private class MicrophoneRecognizeDelegate implements RecognizeCallback {
+  private class MicrophoneRecognizeDelegate implements RecognizeDelegate {
 
-    @Override public void onTranscription(SpeechResults speechResults) {
+    @Override public void onMessage(SpeechResults speechResults) {
       String text = speechResults.getResults().get(0).getAlternatives().get(0).getTranscript();
       showMicText(text);
     }
@@ -305,39 +249,20 @@ public class MainActivity extends AppCompatActivity {
     }
   }
 
-  /**
-   * Initialize AudioTrack by getting buffersize
-   */
-  public void initPlayer() {
-    synchronized (this) {
-      int bs = AudioTrack.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
-      audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC,
-          sampleRate,
-          AudioFormat.CHANNEL_OUT_MONO,
-          AudioFormat.ENCODING_PCM_16BIT,
-          bs,
-          AudioTrack.MODE_STREAM);
-      if (audioTrack != null)
-        audioTrack.play();
+  private class TranslationTask extends AsyncTask<String, Void, String> {
+
+    @Override protected String doInBackground(String... params) {
+      showTranslation(translationService.translate(params[0], Language.ENGLISH, selectedTargetLanguage).getFirstTranslation());
+      return "Did translate";
     }
   }
 
-  private static byte[] convertStreamToByteArray(InputStream is) throws IOException {
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    byte[] buff = new byte[10240];
-    int i;
-    while ((i = is.read(buff, 0, buff.length)) > 0) {
-      baos.write(buff, 0, i);
+  private class SynthesisTask extends AsyncTask<String, Void, String> {
+
+    @Override protected String doInBackground(String... params) {
+      player.playStream(textService.synthesize(params[0], Voice.EN_LISA));
+      return "Did syntesize";
     }
-
-    return baos.toByteArray();
-  }
-
-  protected static int readInt(final byte[] data, final int offset)  {
-    return (data[offset] & 0xff) |
-        ((data[offset+1] & 0xff) <<  8) |
-        ((data[offset+2] & 0xff) << 16) |
-        (data[offset+3] << 24); // no 0xff on the last one to keep the sign
   }
 
 }

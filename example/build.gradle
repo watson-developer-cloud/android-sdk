@@ -27,6 +27,6 @@ dependencies {
   testCompile 'junit:junit:4.12'
   compile 'com.android.support:appcompat-v7:23.3.0'
   compile 'com.android.support:multidex:1.0.0'
-  compile 'com.ibm.watson.developer_cloud:java-sdk:3.0.0-RC1'
+  compile 'com.ibm.watson.developer_cloud:java-sdk:2.10.0'
   compile project(':library')
 }

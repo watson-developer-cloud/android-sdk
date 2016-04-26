@@ -30,6 +30,13 @@ getRecognizeOptions(), new BaseRecognizeCallback() {
 });
 ```
 
+##StreamPlayer
+Provides the ability to directly play an InputStream
+```java
+StreamPlayer player = new StreamPlayer();
+player.playStream(yourInputStream);
+```
+
 ## License
 
 This library is licensed under Apache 2.0. Full license text is
