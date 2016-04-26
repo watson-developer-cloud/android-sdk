@@ -35,7 +35,7 @@ import com.ibm.watson.developer_cloud.language_translation.v2.model.TranslationR
 import com.ibm.watson.developer_cloud.speech_to_text.v1.RecognizeOptions;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.SpeechToText;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechResults;
-import com.ibm.watson.developer_cloud.speech_to_text.v1.websocket.BaseRecognizeCallback;
+import com.ibm.watson.developer_cloud.speech_to_text.v1.websocket.RecognizeCallback;
 import com.ibm.watson.developer_cloud.text_to_speech.v1.TextToSpeech;
 import com.ibm.watson.developer_cloud.text_to_speech.v1.model.Voice;
 import java.io.InputStream;
@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
   private SpeechToText speechService;
   private TextToSpeech textService;
   private LanguageTranslation translationService;
-  private Language selectedTargetLanguage = Language.ENGLISH;
+  private Language selectedTargetLanguage = Language.SPANISH;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -102,11 +102,15 @@ public class MainActivity extends AppCompatActivity {
           @Override public void run() {
             try {
               speechService.recognizeUsingWebSocket(new MicrophoneInputStream(),
-                  getRecognizeOptions(), new BaseRecognizeCallback() {
+                  getRecognizeOptions(), new RecognizeCallback() {
 
                     @Override public void onTranscription(SpeechResults speechResults){
                       String text = speechResults.getResults().get(0).getAlternatives().get(0).getTranscript();
                       showMicText(text);
+                    }
+
+                    @Override public void onConnected() {
+
                     }
 
                     @Override public void onError(Exception e) {
