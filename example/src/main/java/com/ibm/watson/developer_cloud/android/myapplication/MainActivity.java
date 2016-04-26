@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
       @Override public void onCheckedChanged(RadioGroup group, int checkedId) {
         switch (checkedId) {
           case R.id.spanish:
-            selectedTargetLanguage = Language.ENGLISH;
+            selectedTargetLanguage = Language.SPANISH;
             break;
           case R.id.french:
             selectedTargetLanguage = Language.FRENCH;
