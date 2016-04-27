@@ -23,7 +23,7 @@ APIs and SDKs that use cognitive computing to solve complex problems.
 ##### Gradle
 
 ```gradle
-'com.ibm.watson.developer_cloud:java-sdk:0.1.0'
+'com.ibm.watson.developer_cloud:android-sdk:0.1.0'
 ```
 
 ##### JAR
@@ -200,7 +200,6 @@ See [CONTRIBUTING.md](.github/CONTRIBUTING.md).
 [Gradle]: http://www.gradle.org/
 [OkHttp]: http://square.github.io/okhttp/
 [gson]: https://github.com/google/gson
-[apache_maven]: http://maven.apache.org/
-[releases]: https://github.com/watson-developer-cloud/java-sdk/releases
+[releases]: https://github.com/watson-developer-cloud/android-sdk/releases
 
 [jar]: https://github.com/watson-developer-cloud/android-sdk/releases/download/android-sdk-0.1.0/android-sdk-0.1.0-jar-with-dependencies.jar
