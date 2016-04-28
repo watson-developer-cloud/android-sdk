@@ -61,6 +61,16 @@ Watson Services, please ask a question on
 [dW Answers](https://developer.ibm.com/answers/questions/ask/?topics=watson)
 or [Stack Overflow](http://stackoverflow.com/questions/ask?tags=ibm-watson).
 
+The [java-sdk][java-sdk] is quite large. If you are encountering an error similar to 
+```java
+ClassNotFoundException: Didn't find class on path: DexPathList
+```
+or 
+```groovy
+Error converting bytecode to dex
+```
+it's possible you have exceeded the dex limit. To solve this you can enable Multidex Support. Information about enabling Multidex Support can be found on the [Android Developers site](http://developer.android.com/tools/building/multidex.html).
+
 ## Examples
 This SDK is built on top of the [java-sdk][java-sdk]. 
 The examples below are specific for Android as they use the Microphone and Speaker.
