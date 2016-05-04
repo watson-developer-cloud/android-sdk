@@ -13,6 +13,7 @@ APIs and SDKs that use cognitive computing to solve complex problems.
   * [Examples](#examples)
     * [Speech to Text](#speech-to-text)
     * [Text to Speech](#text-to-speech)
+    * [Visual Recognition](#visual-recognition)
   * [License](#license)
   * [Contributing](#contributing)
 
