@@ -16,6 +16,7 @@
 
 package com.ibm.watson.developer_cloud.android.myapplication;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -25,9 +26,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.ibm.watson.developer_cloud.android.library.audio.CameraHelper;
+import com.ibm.watson.developer_cloud.android.library.audio.GalleryHelper;
 import com.ibm.watson.developer_cloud.android.library.audio.MicrophoneInputStream;
 import com.ibm.watson.developer_cloud.android.library.audio.StreamPlayer;
 import com.ibm.watson.developer_cloud.language_translation.v2.LanguageTranslation;
@@ -48,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
   private Button translate;
   private ImageButton play;
   private TextView translatedText;
+  private Button gallery;
+  private Button camera;
+  private ImageView loadedImage;
 
   private SpeechToText speechService;
   private TextToSpeech textService;
@@ -55,10 +62,15 @@ public class MainActivity extends AppCompatActivity {
   private Language selectedTargetLanguage = Language.SPANISH;
 
   private StreamPlayer player = new StreamPlayer();
+  private CameraHelper cameraHelper;
+  private GalleryHelper galleryHelper;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+
+    cameraHelper = new CameraHelper(this);
+    galleryHelper = new GalleryHelper(this);
 
     speechService = initSpeechToTextService();
     textService = initTextToSpeechService();
@@ -70,6 +82,9 @@ public class MainActivity extends AppCompatActivity {
     translate = (Button) findViewById(R.id.translate);
     play = (ImageButton) findViewById(R.id.play);
     translatedText = (TextView) findViewById(R.id.translated_text);
+    gallery = (Button) findViewById(R.id.gallery_button);
+    camera = (Button) findViewById(R.id.camera_button);
+    loadedImage = (ImageView) findViewById(R.id.loaded_image);
 
     targetLanguage.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
       @Override public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -138,7 +153,20 @@ public class MainActivity extends AppCompatActivity {
         new SynthesisTask().execute(translatedText.getText().toString());
       }
     });
+
+    gallery.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        galleryHelper.dispatchGalleryIntent();
+      }
+    });
+
+    camera.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        cameraHelper.dispatchTakePictureIntent();
+      }
+    });
   }
+
 
   private void showTranslation(final String translation) {
     runOnUiThread(new Runnable() {
@@ -262,6 +290,19 @@ public class MainActivity extends AppCompatActivity {
     @Override protected String doInBackground(String... params) {
       player.playStream(textService.synthesize(params[0], Voice.EN_LISA));
       return "Did syntesize";
+    }
+  }
+
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+
+    if (requestCode == CameraHelper.REQUEST_IMAGE_CAPTURE) {
+      loadedImage.setImageBitmap(cameraHelper.getBitmap(resultCode));
+    }
+
+    if (requestCode == GalleryHelper.PICK_IMAGE_REQUEST) {
+      loadedImage.setImageBitmap(galleryHelper.getBitmap(resultCode, data));
     }
   }
 

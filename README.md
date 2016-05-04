@@ -159,6 +159,55 @@ System.out.println(voices);
 ```
 
 
+##CameraHelper
+Provides simple camera access within an activity.
+
+```java
+CameraHelper cameraHelper = new CameraHelper(this);
+cameraHelper.dispatchTakePictureIntent();
+
+@Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+
+    if (requestCode == CameraHelper.REQUEST_IMAGE_CAPTURE) {
+      System.out.println(cameraHelper.getFile(resultCode));
+    }
+  }
+```
+
+###Visual Recognition
+Use the [Visual Recognition][visual_recognition] service to recognize a picture.
+```java
+@Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+
+    if (requestCode == CameraHelper.REQUEST_IMAGE_CAPTURE) {
+      File image = cameraHelper.getFile(resultCode);
+      VisualClassification result = visualRecognitionService.classify(image).execute();
+      System.out.println(result);
+    }
+  }
+```
+
+##GalleryHelper
+Like the CameraHelper, but allows for selection of images already on the device.
+
+To open the gallery:
+```java
+GalleryHelper galleryHelper = new GalleryHelper(this);
+galleryHelper.dispatchGalleryIntent();
+
+@Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+
+    if (requestCode == GalleryHelper.PICK_IMAGE_REQUEST) {
+      System.out.println(galleryHelper.getFile(resultCode));
+    }
+  }
+```
 
 ## Build + Test
 

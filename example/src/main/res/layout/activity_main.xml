@@ -96,4 +96,33 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      >
+
+    <Button
+        android:id="@+id/gallery_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Gallery"
+        />
+
+    <Button
+        android:id="@+id/camera_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Camera"
+        />
+
+
+  </LinearLayout>
+
+    <ImageView
+        android:id="@+id/loaded_image"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        />
+
 </LinearLayout>
