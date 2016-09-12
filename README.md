@@ -1,6 +1,6 @@
 # IBM Watson Developer Cloud Android SDK [![Build Status](https://travis-ci.org/watson-developer-cloud/android-sdk.svg?branch=master)](https://travis-ci.org/watson-developer-cloud/android-sdk)
 
-Android client library to use the [Watson Developer Cloud][wdc] services, a collection of REST
+Android client library to assist with using the [Watson Developer Cloud][wdc] services, a collection of REST
 APIs and SDKs that use cognitive computing to solve complex problems.
 
 
@@ -71,7 +71,7 @@ Error converting bytecode to dex
 it's possible you have exceeded the dex limit. To solve this you can enable Multidex Support. Information about enabling Multidex Support can be found on the [Android Developers site](http://developer.android.com/tools/building/multidex.html).
 
 ## Examples
-This SDK is built on top of the [java-sdk][java-sdk]. 
+This SDK is built for use with the [java-sdk][java-sdk]. 
 The examples below are specific for Android as they use the Microphone and Speaker.
 
 ### Speech to Text
@@ -254,6 +254,7 @@ See [CONTRIBUTING.md](.github/CONTRIBUTING.md).
 [alchemy_data_news]: http://www.alchemyapi.com/products/alchemydata-news
 
 [wdc]: http://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/
+[java-sdk]: https://github.com/watson-developer-cloud/java-sdk
 [bluemix]: https://console.ng.bluemix.net
 [Gradle]: http://www.gradle.org/
 [OkHttp]: http://square.github.io/okhttp/
