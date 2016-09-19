@@ -1,5 +1,5 @@
 /**
- * Copyright IBM Corporation 2016
+ * © Copyright IBM Corporation 2015
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,16 @@
  * limitations under the License.
  **/
 
-package com.ibm.watson.developer_cloud.android.library.audio;
+package com.ibm.watson.developer_cloud.android.library.audio.opus;
 
-/**
- * Delegate for consuming audio data from {@link MicrophoneCaptureThread}.
- */
-public interface AudioConsumer {
-  /**
-   * Data that has been recorded in the most recent sample and is ready for consumption.
-   *
-   * @param data Buffer of audio data in raw form.
-   * @param amplitude Amplitude from sample.
-   * @param volume Volume from sample.
-   */
-  void consume(byte[] data, double amplitude, double volume);
-
-  void consume(byte[] data);
+public class OggOpus {
+    public static native void initAudio();
+    public static native void startRecorder( int sample_rate);
+    public static native void stopRecorder();
+    public static native int encode( String s, int sample_rate );
+    public static native int decode( String s, String o, int sample_rate );
+    public static native float volume();
+    static {
+        System.loadLibrary("oggopus");
+    }
 }

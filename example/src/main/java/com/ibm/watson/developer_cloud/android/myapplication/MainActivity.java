@@ -65,6 +65,9 @@ public class MainActivity extends AppCompatActivity {
   private CameraHelper cameraHelper;
   private GalleryHelper galleryHelper;
 
+  private MicrophoneInputStream capture;
+  private boolean listening = false;
+
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
@@ -114,18 +117,29 @@ public class MainActivity extends AppCompatActivity {
 
     mic.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        mic.setEnabled(false);
+        //mic.setEnabled(false);
 
-        new Thread(new Runnable() {
-          @Override public void run() {
-            try {
-              speechService.recognizeUsingWebSockets(new MicrophoneInputStream(),
-                  getRecognizeOptions(), new MicrophoneRecognizeDelegate());
-            } catch (Exception e) {
-              showError(e);
+        if(listening != true) {
+          capture = new MicrophoneInputStream(false);
+          new Thread(new Runnable() {
+            @Override public void run() {
+              try {
+                speechService.recognizeUsingWebSockets(capture, getRecognizeOptions(), new MicrophoneRecognizeDelegate());
+              } catch (Exception e) {
+                showError(e);
+              }
             }
+          }).start();
+          listening = true;
+        } else {
+          try {
+            capture.close();
+            listening = false;
+          } catch (Exception e) {
+            e.printStackTrace();
           }
-        }).start();
+
+        }
       }
     });
 
@@ -259,6 +273,7 @@ public class MainActivity extends AppCompatActivity {
   private class MicrophoneRecognizeDelegate implements RecognizeDelegate {
 
     @Override public void onMessage(SpeechResults speechResults) {
+      System.out.println(speechResults);
       String text = speechResults.getResults().get(0).getAlternatives().get(0).getTranscript();
       showMicText(text);
     }
@@ -268,6 +283,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override public void onError(Exception e) {
+      System.out.println("shit");
       showError(e);
       enableMicButton();
     }

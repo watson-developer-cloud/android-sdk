@@ -30,6 +30,7 @@ public final class MicrophoneInputStream extends InputStream implements AudioCon
   private static final String TAG = MicrophoneInputStream.class.getName();
 
   public static final String CONTENT_TYPE = "audio/l16;rate=16000";
+  public static final String CONTENT_TYPE_OPUS = "audio/ogg;codec=opus";
 
   private final MicrophoneCaptureThread captureThread;
   private final PipedOutputStream os;
@@ -37,8 +38,8 @@ public final class MicrophoneInputStream extends InputStream implements AudioCon
 
   private AmplitudeListener amplitudeListener;
 
-  public MicrophoneInputStream() {
-    captureThread = new MicrophoneCaptureThread(this);
+  public MicrophoneInputStream(boolean opusEncoded) {
+    captureThread = new MicrophoneCaptureThread(this, opusEncoded);
     os = new PipedOutputStream();
     is = new PipedInputStream();
     try {
@@ -72,6 +73,14 @@ public final class MicrophoneInputStream extends InputStream implements AudioCon
       amplitudeListener.onSample(amplitude, volume);
     }
 
+    try {
+      os.write(data);
+    } catch (IOException e) {
+      Log.e(TAG, e.getMessage());
+    }
+  }
+
+  @Override public void consume(byte[] data) {
     try {
       os.write(data);
     } catch (IOException e) {
