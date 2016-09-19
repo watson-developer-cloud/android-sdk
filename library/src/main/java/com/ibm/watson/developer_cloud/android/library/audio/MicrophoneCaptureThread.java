@@ -94,6 +94,7 @@ final class MicrophoneCaptureThread extends Thread {
       //create a initEncoder method (uploader unnecessary) This means OpusWriter needs a constructor without an uploader
       if(opusEncoded) {
         try {
+          encoder.onStart();
           encoder.encodeAndWrite(bytes);
         } catch (Exception e) {
           e.printStackTrace();

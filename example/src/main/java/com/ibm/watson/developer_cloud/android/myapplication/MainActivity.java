@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         //mic.setEnabled(false);
 
         if(listening != true) {
-          capture = new MicrophoneInputStream(false);
+          capture = new MicrophoneInputStream(true);
           new Thread(new Runnable() {
             @Override public void run() {
               try {
@@ -243,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
   private RecognizeOptions getRecognizeOptions() {
     RecognizeOptions options = new RecognizeOptions();
     options.continuous(true);
-    options.contentType(MicrophoneInputStream.CONTENT_TYPE);
+    options.contentType(MicrophoneInputStream.CONTENT_TYPE_OPUS);
     options.model("en-US_BroadbandModel");
     options.interimResults(true);
     options.inactivityTimeout(2000);
@@ -283,7 +283,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override public void onError(Exception e) {
-      System.out.println("shit");
       showError(e);
       enableMicButton();
     }
