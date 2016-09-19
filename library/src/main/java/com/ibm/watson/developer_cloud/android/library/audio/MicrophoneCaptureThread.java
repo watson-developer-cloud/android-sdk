@@ -89,12 +89,9 @@ final class MicrophoneCaptureThread extends Thread {
       bufferBytes.asShortBuffer().put(buffer, 0, r);
       byte[] bytes = bufferBytes.array();
 
-      //check if OPUS was chosen
-      //encode OPUS and build ogg headers
-      //create a initEncoder method (uploader unnecessary) This means OpusWriter needs a constructor without an uploader
       if(opusEncoded) {
         try {
-          encoder.onStart();
+          encoder.onStart(); //must be called before writing
           encoder.encodeAndWrite(bytes);
         } catch (Exception e) {
           e.printStackTrace();
@@ -105,6 +102,7 @@ final class MicrophoneCaptureThread extends Thread {
 
     }
 
+    encoder.close();
     record.stop();
     record.release();
     stopped = true;

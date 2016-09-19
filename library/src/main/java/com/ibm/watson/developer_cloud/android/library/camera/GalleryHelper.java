@@ -1,4 +1,4 @@
-package com.ibm.watson.developer_cloud.android.library.audio;
+package com.ibm.watson.developer_cloud.android.library.camera;
 
 import android.app.Activity;
 import android.content.Intent;

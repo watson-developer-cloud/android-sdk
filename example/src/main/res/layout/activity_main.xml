@@ -64,14 +64,14 @@
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/translate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/translate"
-        android:enabled="false" />
+  <Button
+      android:id="@+id/translate"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/translate"
+      android:enabled="false" />
 
-    <LinearLayout
+  <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -119,7 +119,7 @@
 
   </LinearLayout>
 
-    <ImageView
+  <ImageView
         android:id="@+id/loaded_image"
         android:layout_width="match_parent"
         android:layout_height="400dp"

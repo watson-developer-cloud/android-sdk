@@ -30,8 +30,9 @@ import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.ibm.watson.developer_cloud.android.library.audio.CameraHelper;
-import com.ibm.watson.developer_cloud.android.library.audio.GalleryHelper;
+import com.ibm.watson.developer_cloud.android.library.audio.utils.ContentType;
+import com.ibm.watson.developer_cloud.android.library.camera.CameraHelper;
+import com.ibm.watson.developer_cloud.android.library.camera.GalleryHelper;
 import com.ibm.watson.developer_cloud.android.library.audio.MicrophoneInputStream;
 import com.ibm.watson.developer_cloud.android.library.audio.StreamPlayer;
 import com.ibm.watson.developer_cloud.language_translation.v2.LanguageTranslation;
@@ -243,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
   private RecognizeOptions getRecognizeOptions() {
     RecognizeOptions options = new RecognizeOptions();
     options.continuous(true);
-    options.contentType(MicrophoneInputStream.CONTENT_TYPE_OPUS);
+    options.contentType(ContentType.OPUS.toString());
     options.model("en-US_BroadbandModel");
     options.interimResults(true);
     options.inactivityTimeout(2000);
