@@ -1,4 +1,4 @@
-# IBM Watson Developer Cloud Android SDK [![Build Status](https://travis-ci.org/watson-developer-cloud/android-sdk.svg?branch=master)](https://travis-ci.org/watson-developer-cloud/android-sdk)
+# IBM Watson Developer Cloud Android SDK [![Build Status](https://travis-ci.org/watson-developer-cloud/android-sdk.svg?branch=master)](https://travis-ci.org/watson-developer-cloud/android-sdk) [![codecov.io](https://codecov.io/github/watson-developer-cloud/android-sdk/branch/develop/graph/badge.svg)](https://codecov.io/github/watson-developer-cloud/android-sdk)
 
 Android client library to assist with using the [Watson Developer Cloud][wdc] services, a collection of REST
 APIs and SDKs that use cognitive computing to solve complex problems.
