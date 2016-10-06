@@ -4,9 +4,14 @@ android {
   compileSdkVersion 23
   buildToolsVersion "23.0.2"
 
+  configurations.all {
+    resolutionStrategy.force 'com.android.support:support-annotations:23.0.1'
+  }
+
   defaultConfig {
     applicationId "com.ibm.watson.developer_cloud.android.myapplication"
-    minSdkVersion 8
+    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    minSdkVersion 9
     targetSdkVersion 21
     versionCode 1
     versionName "1.0"
@@ -29,6 +34,10 @@ android {
 dependencies {
   compile fileTree(dir: 'libs', include: ['*.jar'])
   testCompile 'junit:junit:4.12'
+  androidTestCompile 'com.android.support.test:runner:0.5'
+  androidTestCompile 'com.android.support.test:rules:0.5'
+  androidTestCompile 'com.android.support.test.espresso:espresso-intents:2.2.2'
+  androidTestCompile ('com.android.support.test.espresso:espresso-core:2.2.2') { exclude group: 'com.android.support', module: 'support-annotations' }
   compile 'com.android.support:appcompat-v7:23.3.0'
   compile 'com.android.support:multidex:1.0.0'
   compile 'com.ibm.watson.developer_cloud:java-sdk:2.10.0'

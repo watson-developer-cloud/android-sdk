@@ -1,4 +1,4 @@
-# IBM Watson Developer Cloud Android SDK [![Build Status](https://travis-ci.org/watson-developer-cloud/android-sdk.svg?branch=master)](https://travis-ci.org/watson-developer-cloud/android-sdk)
+# IBM Watson Developer Cloud Android SDK [![Build Status](https://travis-ci.org/watson-developer-cloud/android-sdk.svg?branch=master)](https://travis-ci.org/watson-developer-cloud/android-sdk) [![codecov.io](https://codecov.io/github/watson-developer-cloud/android-sdk/branch/develop/graph/badge.svg)](https://codecov.io/github/watson-developer-cloud/android-sdk)
 
 Android client library to assist with using the [Watson Developer Cloud][wdc] services, a collection of REST
 APIs and SDKs that use cognitive computing to solve complex problems.
@@ -60,61 +60,21 @@ Watson Services, please ask a question on
 [dW Answers](https://developer.ibm.com/answers/questions/ask/?topics=watson)
 or [Stack Overflow](http://stackoverflow.com/questions/ask?tags=ibm-watson).
 
-The [java-sdk][java-sdk] is quite large. If you are encountering an error similar to 
-```java
-ClassNotFoundException: Didn't find class on path: DexPathList
-```
-or 
-```groovy
-Error converting bytecode to dex
-```
-it's possible you have exceeded the dex limit. To solve this you can enable Multidex Support. Information about enabling Multidex Support can be found on the [Android Developers site](http://developer.android.com/tools/building/multidex.html).
+You can also check out the [wiki][wiki] for some additional information.
 
 ## Examples
-This SDK is built for use with the [java-sdk][java-sdk]. 
-The examples below are specific for Android as they use the Microphone and Speaker.
+This SDK is built for use with the [java-sdk][java-sdk].
+The examples below are specific for Android as they use the Microphone and Speaker; for actual services refer to the [java-sdk][java-sdk].
 
-### Speech to Text
-Use the [Speech to Text][speech_to_text] service to recognize the text from a .wav file.
-
-```java
-SpeechToText service = new SpeechToText();
-service.setUsernameAndPassword("<username>", "<password>");
-
-File audio = new File("src/test/resources/sample1.wav");
-
-SpeechResults transcript = service.recognize(audio, HttpMediaType.AUDIO_WAV).execute();
-System.out.println(transcript);
-```
-
-#### WebSocket support
-
-Speech to Text supports WebSocket, the url is:  
-  `wss://stream.watsonplatform.net/speech-to-text/api/v1/recognize`  
-
-  ```java
-SpeechToText service = new SpeechToText();
-service.setUsernameAndPassword("<username>", "<password>");
-
-File audio = new File("src/test/resources/sample1.wav");
-
-RecognizeOptions options = new RecognizeOptions();
-  options.continuous(true).interimResults(true).contentType(HttpMediaType.AUDIO_WAV);
-
-  service.recognizeUsingWebSocket(audio, options, new BaseRecognizeCallback() {
-    @Override
-    public void onTranscription(SpeechResults speechResults) {
-      System.out.println(speechResults);
-    }
-  );
-  // wait 20 seconds for the asynchronous response
-  Thread.sleep(20000);
-```
 #### Microphone Input Stream
-Convience function for creating an `InputStream` from device microphone
+Convience function for creating an `InputStream` from device microphone. You can record raw PCM data or data encoded using the ogg codec.
 
 ```java
+// record PCM data
 InputStream myInputStream = new MicrophoneInputStream();
+
+// record PCM data and encode it with the ogg codec
+InputStream myOggStream = new MicrophoneInputStream(true);
 ```
 
 An example using a Watson Developer Cloud service would look like
@@ -145,19 +105,6 @@ StreamPlayer player = new StreamPlayer();
 player.playStream(yourInputStream);
 ```
 
-
-### Text to Speech
-Use the [Text to Speech][text_to_speech] service to get the available voices to synthesize.
-
-```java
-TextToSpeech service = new TextToSpeech();
-service.setUsernameAndPassword("<username>", "<password>");
-
-List<Voice> voices = service.getVoices().execute();
-System.out.println(voices);
-```
-
-
 ##CameraHelper
 Provides simple camera access within an activity.
 
@@ -171,21 +118,6 @@ cameraHelper.dispatchTakePictureIntent();
 
     if (requestCode == CameraHelper.REQUEST_IMAGE_CAPTURE) {
       System.out.println(cameraHelper.getFile(resultCode));
-    }
-  }
-```
-
-###Visual Recognition
-Use the [Visual Recognition][visual_recognition] service to recognize a picture.
-```java
-@Override
-  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
-
-    if (requestCode == CameraHelper.REQUEST_IMAGE_CAPTURE) {
-      File image = cameraHelper.getFile(resultCode);
-      VisualClassification result = visualRecognitionService.classify(image).execute();
-      System.out.println(result);
     }
   }
 ```
@@ -260,5 +192,6 @@ See [CONTRIBUTING.md](.github/CONTRIBUTING.md).
 [OkHttp]: http://square.github.io/okhttp/
 [gson]: https://github.com/google/gson
 [releases]: https://github.com/watson-developer-cloud/android-sdk/releases
+[wiki]: https://github.com/watson-developer-cloud/android-sdk/wiki
 
 [jar]: https://github.com/watson-developer-cloud/android-sdk/releases/download/android-sdk-0.1.0/android-sdk-0.1.0-jar-with-dependencies.jar
