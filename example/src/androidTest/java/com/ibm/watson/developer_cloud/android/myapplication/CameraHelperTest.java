@@ -46,6 +46,12 @@ public class CameraHelperTest {
     Intents.init();
 
     Espresso.onView(withId(R.id.camera_button)).perform(click());
+    Espresso.closeSoftKeyboard();
+    try {
+      Thread.sleep(1000);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
 
     intending(hasComponent(String.valueOf(hasAction(MediaStore.ACTION_IMAGE_CAPTURE))));
     Intents.release();

@@ -51,7 +51,7 @@ public class GalleryHelperTest {
     };
     activity.runOnUiThread(wakeUpDevice);
   }
-  
+
   @Before
   public void setupImageUri() {
     Resources resources = InstrumentationRegistry.getTargetContext().getResources();
@@ -76,6 +76,12 @@ public class GalleryHelperTest {
     intending(expectedIntent).respondWith(result);
 
     Espresso.onView(withId(R.id.gallery_button)).perform(click());
+    Espresso.closeSoftKeyboard();
+    try {
+      Thread.sleep(1000);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
     intended(expectedIntent);
 
 
