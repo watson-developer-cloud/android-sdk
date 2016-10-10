@@ -1,4 +1,4 @@
-# IBM Watson Developer Cloud Android SDK 
+# IBM Watson Developer Cloud Android SDK [![Build Status](https://travis-ci.org/watson-developer-cloud/android-sdk.svg?branch=master)](https://travis-ci.org/watson-developer-cloud/android-sdk)
 
 Android client library to assist with using the [Watson Developer Cloud][wdc] services, a collection of REST
 APIs and SDKs that use cognitive computing to solve complex problems.
@@ -141,9 +141,17 @@ galleryHelper.dispatchGalleryIntent();
   }
 ```
 
+## Testing 
+
+Testing in this SDK is accomplished with [Espresso](https://google.github.io/android-testing-support-library/docs/espresso/). 
+
+To run the tests, in Android Studio:
+
+Within the example package, right-click the androidTest/java folder and click Run 'All Tests'.
+
 ## Build + Test
 
-Use [Gradle][] (version 1.x) to build and test the project you can use .
+Use [Gradle][] (version 1.x) to build and test the project you can use 
 
 Gradle:
 
