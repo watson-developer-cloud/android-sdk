@@ -1,4 +1,4 @@
-package com.ibm.watson.developer_cloud.android.library.audio;
+package com.ibm.watson.developer_cloud.android.library.camera;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -31,7 +31,7 @@ public final class CameraHelper {
   }
 
   /**
-   * Starts a activity using the device's onboard camera app
+   * Starts an activity using the device's onboard camera app
    */
   public void dispatchTakePictureIntent() {
     Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);

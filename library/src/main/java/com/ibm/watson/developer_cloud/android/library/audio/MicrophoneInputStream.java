@@ -17,6 +17,7 @@
 package com.ibm.watson.developer_cloud.android.library.audio;
 
 import android.util.Log;
+import com.ibm.watson.developer_cloud.android.library.audio.utils.ContentType;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedInputStream;
@@ -29,7 +30,7 @@ import java.io.PipedOutputStream;
 public final class MicrophoneInputStream extends InputStream implements AudioConsumer {
   private static final String TAG = MicrophoneInputStream.class.getName();
 
-  public static final String CONTENT_TYPE = "audio/l16;rate=16000";
+  public final ContentType CONTENT_TYPE;
 
   private final MicrophoneCaptureThread captureThread;
   private final PipedOutputStream os;
@@ -38,7 +39,25 @@ public final class MicrophoneInputStream extends InputStream implements AudioCon
   private AmplitudeListener amplitudeListener;
 
   public MicrophoneInputStream() {
-    captureThread = new MicrophoneCaptureThread(this);
+    captureThread = new MicrophoneCaptureThread(this, false);
+    CONTENT_TYPE = ContentType.RAW;
+    os = new PipedOutputStream();
+    is = new PipedInputStream();
+    try {
+      is.connect(os);
+    } catch (IOException e) {
+      Log.e(TAG, e.getMessage());
+    }
+    captureThread.start();
+  }
+
+  public MicrophoneInputStream(boolean opusEncoded) {
+    captureThread = new MicrophoneCaptureThread(this, opusEncoded);
+    if(opusEncoded == true) {
+      CONTENT_TYPE = ContentType.OPUS;
+    } else {
+      CONTENT_TYPE = ContentType.RAW;
+    }
     os = new PipedOutputStream();
     is = new PipedInputStream();
     try {
@@ -79,6 +98,14 @@ public final class MicrophoneInputStream extends InputStream implements AudioCon
     }
   }
 
+  @Override public void consume(byte[] data) {
+    try {
+      os.write(data);
+    } catch (IOException e) {
+      Log.e(TAG, e.getMessage());
+    }
+  }
+
   /**
    * Receive amplitude (and volume) data per sample from the {@code MicrophoneInputStream}.
    *
@@ -93,6 +120,6 @@ public final class MicrophoneInputStream extends InputStream implements AudioCon
    * @return audio/l16;rate=16000
    */
   public String getContentType() {
-    return "audio/l16;rate=16000";
+    return CONTENT_TYPE.toString();
   }
 }

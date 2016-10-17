@@ -30,8 +30,9 @@ import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.ibm.watson.developer_cloud.android.library.audio.CameraHelper;
-import com.ibm.watson.developer_cloud.android.library.audio.GalleryHelper;
+import com.ibm.watson.developer_cloud.android.library.audio.utils.ContentType;
+import com.ibm.watson.developer_cloud.android.library.camera.CameraHelper;
+import com.ibm.watson.developer_cloud.android.library.camera.GalleryHelper;
 import com.ibm.watson.developer_cloud.android.library.audio.MicrophoneInputStream;
 import com.ibm.watson.developer_cloud.android.library.audio.StreamPlayer;
 import com.ibm.watson.developer_cloud.language_translation.v2.LanguageTranslation;
@@ -64,6 +65,9 @@ public class MainActivity extends AppCompatActivity {
   private StreamPlayer player = new StreamPlayer();
   private CameraHelper cameraHelper;
   private GalleryHelper galleryHelper;
+
+  private MicrophoneInputStream capture;
+  private boolean listening = false;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -114,18 +118,29 @@ public class MainActivity extends AppCompatActivity {
 
     mic.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        mic.setEnabled(false);
+        //mic.setEnabled(false);
 
-        new Thread(new Runnable() {
-          @Override public void run() {
-            try {
-              speechService.recognizeUsingWebSockets(new MicrophoneInputStream(),
-                  getRecognizeOptions(), new MicrophoneRecognizeDelegate());
-            } catch (Exception e) {
-              showError(e);
+        if(listening != true) {
+          capture = new MicrophoneInputStream(true);
+          new Thread(new Runnable() {
+            @Override public void run() {
+              try {
+                speechService.recognizeUsingWebSockets(capture, getRecognizeOptions(), new MicrophoneRecognizeDelegate());
+              } catch (Exception e) {
+                showError(e);
+              }
             }
+          }).start();
+          listening = true;
+        } else {
+          try {
+            capture.close();
+            listening = false;
+          } catch (Exception e) {
+            e.printStackTrace();
           }
-        }).start();
+
+        }
       }
     });
 
@@ -229,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
   private RecognizeOptions getRecognizeOptions() {
     RecognizeOptions options = new RecognizeOptions();
     options.continuous(true);
-    options.contentType(MicrophoneInputStream.CONTENT_TYPE);
+    options.contentType(ContentType.OPUS.toString());
     options.model("en-US_BroadbandModel");
     options.interimResults(true);
     options.inactivityTimeout(2000);
@@ -259,6 +274,7 @@ public class MainActivity extends AppCompatActivity {
   private class MicrophoneRecognizeDelegate implements RecognizeDelegate {
 
     @Override public void onMessage(SpeechResults speechResults) {
+      System.out.println(speechResults);
       String text = speechResults.getResults().get(0).getAlternatives().get(0).getTranscript();
       showMicText(text);
     }

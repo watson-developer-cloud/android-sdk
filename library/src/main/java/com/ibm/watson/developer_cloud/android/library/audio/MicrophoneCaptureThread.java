@@ -20,6 +20,7 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.util.Log;
+import com.ibm.watson.developer_cloud.android.library.audio.opus.OggOpusEnc;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -32,6 +33,9 @@ final class MicrophoneCaptureThread extends Thread {
   private static final String TAG = MicrophoneCaptureThread.class.getName();
   private static final int SAMPLE_RATE = 16000;
 
+  private boolean opusEncoded;
+  private OggOpusEnc encoder;
+
   private final AudioConsumer consumer;
   private boolean stop;
   private boolean stopped;
@@ -43,9 +47,10 @@ final class MicrophoneCaptureThread extends Thread {
    *
    * @param consumer Delegate for consuming audio data from the microphone.
    */
-  public MicrophoneCaptureThread(AudioConsumer consumer) {
+  public MicrophoneCaptureThread(AudioConsumer consumer, boolean opusEncoded) {
     android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
     this.consumer = consumer;
+    this.opusEncoded = opusEncoded;
   }
 
   @Override public void run() {
@@ -56,6 +61,12 @@ final class MicrophoneCaptureThread extends Thread {
     AudioRecord record = new AudioRecord(MediaRecorder.AudioSource.MIC, SAMPLE_RATE,
         AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize);
     record.startRecording();
+
+    try {
+      encoder = new OggOpusEnc(consumer);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
 
     while (!stop) {
       int r = record.read(buffer, 0, buffer.length);
@@ -78,9 +89,20 @@ final class MicrophoneCaptureThread extends Thread {
       bufferBytes.asShortBuffer().put(buffer, 0, r);
       byte[] bytes = bufferBytes.array();
 
-      consumer.consume(bytes, amplitude, volume);
+      if(opusEncoded) {
+        try {
+          encoder.onStart(); //must be called before writing
+          encoder.encodeAndWrite(bytes);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      } else {
+        consumer.consume(bytes, amplitude, volume);
+      }
+
     }
 
+    encoder.close();
     record.stop();
     record.release();
     stopped = true;
