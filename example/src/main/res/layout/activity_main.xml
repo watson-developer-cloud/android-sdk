@@ -17,34 +17,34 @@
         android:text="@string/target_language"
         android:textStyle="bold" />
 
-    <RadioGroup
-        android:id="@+id/target_language"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+  <RadioGroup
+      android:id="@+id/target_language"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal">
 
-        <RadioButton
-            android:id="@+id/spanish"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/spanish"
-            android:checked="true" />
+      <RadioButton
+          android:id="@+id/spanish"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="@string/spanish"
+          android:checked="true" />
 
-        <RadioButton
-            android:id="@+id/french"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/french" />
+      <RadioButton
+          android:id="@+id/french"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="@string/french" />
 
-        <RadioButton
-            android:id="@+id/italian"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/italian" />
+      <RadioButton
+          android:id="@+id/italian"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="@string/italian" />
 
-    </RadioGroup>
+  </RadioGroup>
 
-    <LinearLayout
+  <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
