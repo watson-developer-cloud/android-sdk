@@ -23,9 +23,9 @@ APIs and SDKs that use cognitive computing to solve complex problems.
 'com.ibm.watson.developer_cloud:android-sdk:0.2.0'
 ```
 
-##### JAR
+##### AAR
 
-Download the jar with dependencies [here][jar].
+Download the aar with dependencies [here][aar].
 
 -----
 Now, you are ready to see some [examples](https://github.com/watson-developer-cloud/android-sdk/tree/master/example).
@@ -154,7 +154,6 @@ Gradle:
 
   ```sh
   $ cd android-sdk
-  $ gradle jar  # build jar file (build/libs/android-sdk-0.1.0.jar)
   $ gradle test # run tests
   ```
 
@@ -200,4 +199,4 @@ See [CONTRIBUTING.md](.github/CONTRIBUTING.md).
 [releases]: https://github.com/watson-developer-cloud/android-sdk/releases
 [wiki]: https://github.com/watson-developer-cloud/android-sdk/wiki
 
-[jar]: https://github.com/watson-developer-cloud/android-sdk/releases/download/android-sdk-0.1.0/android-sdk-0.1.0-jar-with-dependencies.jar
+[aar]: https://github.com/watson-developer-cloud/android-sdk/blob/develop/releases/download/android-sdk-0.2.0-aar-with-dependencies.aar
