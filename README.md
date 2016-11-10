@@ -133,7 +133,7 @@ galleryHelper.dispatchGalleryIntent();
     super.onActivityResult(requestCode, resultCode, data);
 
     if (requestCode == GalleryHelper.PICK_IMAGE_REQUEST) {
-      System.out.println(galleryHelper.getFile(resultCode));
+      System.out.println(galleryHelper.getFile(resultCode, data));
     }
   }
 ```
