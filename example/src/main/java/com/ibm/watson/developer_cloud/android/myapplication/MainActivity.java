@@ -17,6 +17,7 @@
 package com.ibm.watson.developer_cloud.android.myapplication;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -305,7 +306,19 @@ public class MainActivity extends AppCompatActivity {
 
     @Override protected String doInBackground(String... params) {
       player.playStream(textService.synthesize(params[0], Voice.EN_LISA));
-      return "Did syntesize";
+      return "Did synthesize";
+    }
+  }
+
+  @Override
+  public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    switch (requestCode) {
+      case CameraHelper.REQUEST_PERMISSION: {
+        // permission granted
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+          cameraHelper.dispatchTakePictureIntent();
+        }
+      }
     }
   }
 
