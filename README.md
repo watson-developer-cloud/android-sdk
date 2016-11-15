@@ -199,4 +199,4 @@ See [CONTRIBUTING.md](.github/CONTRIBUTING.md).
 [releases]: https://github.com/watson-developer-cloud/android-sdk/releases
 [wiki]: https://github.com/watson-developer-cloud/android-sdk/wiki
 
-[aar]: https://github.com/watson-developer-cloud/android-sdk/blob/develop/releases/download/android-sdk-0.2.1-aar-with-dependencies.aar
+[aar]: https://github.com/watson-developer-cloud/android-sdk/blob/master/releases/download/android-sdk-0.2.1-aar-with-dependencies.aar
