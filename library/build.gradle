@@ -5,7 +5,7 @@ publish {
   userOrg = 'milbuild'
   groupId = 'com.ibm.watson.developer_cloud'
   artifactId = 'android-sdk'
-  publishVersion = '0.2.0'
+  publishVersion = '0.2.1'
   desc = 'A utility library for use with the Watson Java SDK'
   website = 'https://github.com/watson-developer-cloud/android-sdk'
 }
