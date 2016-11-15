@@ -80,7 +80,7 @@ An example using a Watson Developer Cloud service would look like
 ```java
 speechService.recognizeUsingWebSocket(new MicrophoneInputStream(),
 getRecognizeOptions(), new BaseRecognizeCallback() {
-  @Override 
+  @Override
   public void onTranscription(SpeechResults speechResults){
     String text = speechResults.getResults().get(0).getAlternatives().get(0).getTranscript();
     System.out.println(text);
@@ -138,9 +138,9 @@ galleryHelper.dispatchGalleryIntent();
   }
 ```
 
-## Testing 
+## Testing
 
-Testing in this SDK is accomplished with [Espresso](https://google.github.io/android-testing-support-library/docs/espresso/). 
+Testing in this SDK is accomplished with [Espresso](https://google.github.io/android-testing-support-library/docs/espresso/).
 
 To run the tests, in Android Studio:
 
@@ -148,7 +148,7 @@ Within the example package, right-click the androidTest/java folder and click Ru
 
 ## Build + Test
 
-Use [Gradle][] (version 1.x) to build and test the project you can use 
+Use [Gradle][] (version 1.x) to build and test the project you can use
 
 Gradle:
 
@@ -199,4 +199,4 @@ See [CONTRIBUTING.md](.github/CONTRIBUTING.md).
 [releases]: https://github.com/watson-developer-cloud/android-sdk/releases
 [wiki]: https://github.com/watson-developer-cloud/android-sdk/wiki
 
-[aar]: https://github.com/watson-developer-cloud/android-sdk/blob/develop/releases/download/android-sdk-0.2.0-aar-with-dependencies.aar
+[aar]: https://github.com/watson-developer-cloud/android-sdk/blob/develop/releases/download/android-sdk-0.2.1-aar-with-dependencies.aar
