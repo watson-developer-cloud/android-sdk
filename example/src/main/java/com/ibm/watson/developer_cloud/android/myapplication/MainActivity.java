@@ -244,13 +244,13 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private RecognizeOptions getRecognizeOptions() {
-      return new RecognizeOptions.Builder()
-              .continuous(true)
-              .contentType(ContentType.OPUS.toString())
-              .model("en-US_BroadbandModel")
-              .interimResults(true)
-              .inactivityTimeout(2000)
-              .build();
+    return new RecognizeOptions.Builder()
+            .continuous(true)
+            .contentType(ContentType.OPUS.toString())
+            .model("en-US_BroadbandModel")
+            .interimResults(true)
+            .inactivityTimeout(2000)
+            .build();
   }
 
   private abstract class EmptyTextWatcher implements TextWatcher {
