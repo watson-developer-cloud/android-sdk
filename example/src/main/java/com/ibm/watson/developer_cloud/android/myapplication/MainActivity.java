@@ -31,17 +31,18 @@ import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.ibm.watson.developer_cloud.android.library.audio.MicrophoneInputStream;
+import com.ibm.watson.developer_cloud.android.library.audio.StreamPlayer;
 import com.ibm.watson.developer_cloud.android.library.audio.utils.ContentType;
 import com.ibm.watson.developer_cloud.android.library.camera.CameraHelper;
 import com.ibm.watson.developer_cloud.android.library.camera.GalleryHelper;
-import com.ibm.watson.developer_cloud.android.library.audio.MicrophoneInputStream;
-import com.ibm.watson.developer_cloud.android.library.audio.StreamPlayer;
-import com.ibm.watson.developer_cloud.language_translation.v2.LanguageTranslation;
-import com.ibm.watson.developer_cloud.language_translation.v2.model.Language;
-import com.ibm.watson.developer_cloud.speech_to_text.v1.RecognizeOptions;
+import com.ibm.watson.developer_cloud.language_translator.v2.LanguageTranslator;
+import com.ibm.watson.developer_cloud.language_translator.v2.model.Language;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.SpeechToText;
+import com.ibm.watson.developer_cloud.speech_to_text.v1.model.RecognizeOptions;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechResults;
-import com.ibm.watson.developer_cloud.speech_to_text.v1.websocket.RecognizeDelegate;
+import com.ibm.watson.developer_cloud.speech_to_text.v1.websocket.RecognizeCallback;
 import com.ibm.watson.developer_cloud.text_to_speech.v1.TextToSpeech;
 import com.ibm.watson.developer_cloud.text_to_speech.v1.model.Voice;
 
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
   private SpeechToText speechService;
   private TextToSpeech textService;
-  private LanguageTranslation translationService;
+  private LanguageTranslator translationService;
   private Language selectedTargetLanguage = Language.SPANISH;
 
   private StreamPlayer player = new StreamPlayer();
@@ -79,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
     speechService = initSpeechToTextService();
     textService = initTextToSpeechService();
-    translationService = initLanguageTranslationService();
+    translationService = initLanguageTranslatorService();
 
     targetLanguage = (RadioGroup) findViewById(R.id.target_language);
     input = (EditText) findViewById(R.id.input);
@@ -126,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
           new Thread(new Runnable() {
             @Override public void run() {
               try {
-                speechService.recognizeUsingWebSockets(capture, getRecognizeOptions(), new MicrophoneRecognizeDelegate());
+                speechService.recognizeUsingWebSocket(capture, getRecognizeOptions(), new MicrophoneRecognizeDelegate());
               } catch (Exception e) {
                 showError(e);
               }
@@ -234,8 +235,8 @@ public class MainActivity extends AppCompatActivity {
     return service;
   }
 
-  private LanguageTranslation initLanguageTranslationService() {
-    LanguageTranslation service = new LanguageTranslation();
+  private LanguageTranslator initLanguageTranslatorService() {
+    LanguageTranslator service = new LanguageTranslator();
     String username = getString(R.string.language_translation_username);
     String password = getString(R.string.language_translation_password);
     service.setUsernameAndPassword(username, password);
@@ -243,13 +244,13 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private RecognizeOptions getRecognizeOptions() {
-    RecognizeOptions options = new RecognizeOptions();
-    options.continuous(true);
-    options.contentType(ContentType.OPUS.toString());
-    options.model("en-US_BroadbandModel");
-    options.interimResults(true);
-    options.inactivityTimeout(2000);
-    return options;
+    return new RecognizeOptions.Builder()
+      .continuous(true)
+      .contentType(ContentType.OPUS.toString())
+      .model("en-US_BroadbandModel")
+      .interimResults(true)
+      .inactivityTimeout(2000)
+      .build();
   }
 
   private abstract class EmptyTextWatcher implements TextWatcher {
@@ -272,9 +273,10 @@ public class MainActivity extends AppCompatActivity {
     public abstract void onEmpty(boolean empty);
   }
 
-  private class MicrophoneRecognizeDelegate implements RecognizeDelegate {
+  private class MicrophoneRecognizeDelegate implements RecognizeCallback {
 
-    @Override public void onMessage(SpeechResults speechResults) {
+    @Override
+    public void onTranscription(SpeechResults speechResults) {
       System.out.println(speechResults);
       String text = speechResults.getResults().get(0).getAlternatives().get(0).getTranscript();
       showMicText(text);
@@ -297,7 +299,7 @@ public class MainActivity extends AppCompatActivity {
   private class TranslationTask extends AsyncTask<String, Void, String> {
 
     @Override protected String doInBackground(String... params) {
-      showTranslation(translationService.translate(params[0], Language.ENGLISH, selectedTargetLanguage).getFirstTranslation());
+      showTranslation(translationService.translate(params[0], Language.ENGLISH, selectedTargetLanguage).execute().getFirstTranslation());
       return "Did translate";
     }
   }
@@ -305,7 +307,7 @@ public class MainActivity extends AppCompatActivity {
   private class SynthesisTask extends AsyncTask<String, Void, String> {
 
     @Override protected String doInBackground(String... params) {
-      player.playStream(textService.synthesize(params[0], Voice.EN_LISA));
+      player.playStream(textService.synthesize(params[0], Voice.EN_LISA).execute());
       return "Did synthesize";
     }
   }
