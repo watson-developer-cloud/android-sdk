@@ -2,10 +2,12 @@ package com.ibm.watson.developer_cloud.android.library.camera;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.v4.content.CursorLoader;
 import android.util.Log;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -46,7 +48,8 @@ public final class GalleryHelper {
   public File getFile(int resultCode, Intent data) {
     if(resultCode == activity.RESULT_OK) {
       Uri targetUri = data.getData();
-      return new File(targetUri.getPath());
+      //return new File(targetUri.getPath());
+      return new File(getRealPathFromURI(targetUri));
     }
     Log.e(TAG, "Result Code was not OK");
     return null;
@@ -72,5 +75,20 @@ public final class GalleryHelper {
     }
     Log.e(TAG, "Result Code was not OK");
     return null;
+  }
+
+  /**
+   * This method returns a path, given a content URI
+   *
+   * @param contentUri URI of some image
+   * @return A string path
+   */
+  public String getRealPathFromURI(Uri contentUri) {
+    String[] proj = { MediaStore.Images.Media.DATA };
+    CursorLoader cLoader = new CursorLoader(activity.getApplicationContext(), contentUri, proj, null, null, null);
+    Cursor cursor = cLoader.loadInBackground();
+    int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+    cursor.moveToFirst();
+    return cursor.getString(column_index);
   }
 }
