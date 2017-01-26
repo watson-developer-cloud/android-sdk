@@ -48,7 +48,6 @@ public final class GalleryHelper {
   public File getFile(int resultCode, Intent data) {
     if(resultCode == activity.RESULT_OK) {
       Uri targetUri = data.getData();
-      //return new File(targetUri.getPath());
       return new File(getRealPathFromURI(targetUri));
     }
     Log.e(TAG, "Result Code was not OK");
