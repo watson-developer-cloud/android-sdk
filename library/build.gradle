@@ -1,17 +1,171 @@
+  <?php
+  /**
+    * "Android-sdk:0.2.1"
+    Installation:
+    Gradle: "com.ibm.watson.developer_cloud:android-sdk:0.2.1"
+    https://github.com/watson-developer-cloud/android-sdk/master/releases/download/android-sdk-0.2.1-aar-with-dependencies.aar/
+    *
+    ?
+    -  Monetise: {new app
+    -  Select App: Android 7.1
+    -  AppId:  ca-app-pub-7643807121193309-3384293672
+    -  adunit: Google Mobile Ads SDK
+    -  http://WWW.AdMob.com
+    -  Format:
+    -  Ad unit name: Google Mobile Ads SDK
+    -  Ad unit ID: ca-app-pub-7643807121193309/4721426073
+    -  Set up Firebase Analytics
+    -  project name: Developer sdkmanager Android:/
+    -  successfully linked
+    -  Android-app -> App: 'air.jndogi.admobapp .slid...
+    -  Project:"Developer sdkmanager"
+    -  *
+    -  ?
+    -   [Sandbox Ad Account:Henry Baez](104839243365327)
+    -   Associated Page:
+    -   [iPhone OS X 7.5sv](1631924057116318)
+    -  <configure Google Signin> to request ID tokens.
+    -  method: request Id Token
+    -  call: get Id Token
+    -  <get Id Token>
+    -  request Id Token: getIdToken
+    -  Get Access Token:
+    -  Token Perrmissions:manage page
+    -  [Token: EAAD15HxMGSoBAlabaKjFjZCX3gVhGnDntSZA9po6d8GQ7BhuERJGlZCmEEQLmusiu5KOlUZBaio0gwSDJ0vzx9Nq0cHi8EQLucccKeCYyruNq9z499ZBMKtlYbsLOnJYSSeDzY8ZBdTN81GGaPKvJccDYqnZB1UmD52fbLpGCT6b8QZD];,)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
+    -   *
+    -  ?
+    -  'Android-7.1':
+    -  "sdkmanager":
+    -  "android_sdk"
+    -  The "packages" argument is an SDK-style path as shown with the "--list" command, wrapped in quotes(for exampke, "build-tools;25.0.0" or "platforms; android-25".
+    -  To get the latest platform tools install:
+    -  < sdkmanager "platforms;android-25" >
+    -  < sdkmanager --package_file=package_file [options]
+    -  Update "all installed Packages"
+    -  < sdkmanager --update [options]
+    -  $HOME/.android/debug.keystore" 
+    -  module:node.js
+    -  Paths: keystore: keystore paths: "android_7.1 sdkmanager",
+    -  Password: create and confirm secure password for your KeyStore:.
+    *
+    ?
+    -   /* REMOTE CONFIG on iOS */
+    -  Install the FirebaseSDK:
+    -  pod "Firebase/RemoteConfig"
+    -  Run: 'podinstall':
+    -  Open: created "xcworkspace", file.
+    -  Import Firebase module in your "UIApplicationDelegate", subclass:
+    -  @import Firebase;
+    -  Configure: a "FIRApp", share instance
+    -  application: "application:DidFinishLaunchingWithOptions: method:
+    -  // Use Firebase library to configure API's
+    -  [FIRApp configure];
+    -  "Create the 'Singleton Remote Config Object",
+    -  self.remoteConfig = [FIRRemoteConfig remoteConfig];
+    -  *
+    -  ?
+    -  /* AdMob:developer-sdkmanager-android.app: */
+    -  "project_info": {sdkmanager-android_sdk:7.1:}
+    -  "project_number": "93203169793".
+    -  "firebase_url": "https://developer-sdkmanager-android.firebaseio.com".
+    -  "projevt_id": "developer-sdkmanager-android".
+    -  "storage_bucket": "developer-sdkmanager-android.appspot.com"
+    -  };
+    -  "client":[
+    -  "client_info": {Henry Baez Developer sdkmanager Android_sdk}
+    -  "mobile sdk_app_id":("1:93203169793:android:0393ffdf2e79e211")
+    -  "android_client_info": {Developer Android-25 sdkmanager-buold-tools-25.0.0-dev}
+    -  "package_name": "air.jindogi.admobapp.slidepuzzle".
+    -  "oauth_client":
+    -  "client_id": "93203169793-clogmlslrotlakqdf5tlu8k0nf33o7vd.apps.googleusercontent.com",
+    -  "cluent_type":3
+    -   api key services app invite.quote.services
+    *
+    ?
+    -  /* AdMob Chrome Browser app */
+    -  App: User Agent for GoogleChrome(Android):
+    -  Ad unit(s):
+    -            Name:Henry Baez
+                  Format:Interstitial
+                  ID: ca-app-pub-7643807121193309/0417995074
+    -  Google Mobile Ads SDK Developers: Henry Baez github username:@0072016      
+    -  "Android Google Mobile Ads SDK" in "Google Play Services".
+    -  ios: "iOS Google Mobile Ads SDK", "inside game engines such as "Unity": and "Cocos2d-x":
+    -  [ "AdWords-281-7907436" (com.AdMob_App.ios)
+    -  " ios BundleID:com.AdMob_App.ios".
+    -  *
+    -  ?
+    -  /* Info.plist */
+    -  
+    -  
+    @0072016
+    https://developer.android-google.com
+    2017-01-31
+   
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 apply plugin: 'com.android.library'
 apply plugin: 'com.novoda.bintray-release'
 
 publish {
-  userOrg = 'milbuild'
+  userOrg = 'iphoneos':
   groupId = 'com.ibm.watson.developer_cloud'
-  artifactId = 'android-sdk'
-  publishVersion = '0.2.1'
+  artifactId = 'android_sdk':("sdkmanager")
+  publishVersion = '0.2.1':("android 7.1")
   desc = 'A utility library for use with the Watson Java SDK'
   website = 'https://github.com/watson-developer-cloud/android-sdk'
 }
 
-android {
+android {sdkmanager "platforms;android-25"}
+
   compileSdkVersion 23
+ " build-tools; 25.0.0"
   buildToolsVersion "23.0.2"
 
   defaultConfig {
@@ -43,5 +197,7 @@ dependencies {
   compile 'com.android.support:appcompat-v7:23.2.1'
   compile ('net.java.dev.jna:jna:4.2.2') {
     transitive=true
+    
+    @0072016
   }
 }
