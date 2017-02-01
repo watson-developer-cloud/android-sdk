@@ -43,6 +43,17 @@ public final class StreamPlayer {
   }
 
   /**
+   * Interrupt the audioStream
+   */
+  public void interrupt() {
+    if (audioTrack != null) {
+      audioTrack.flush();
+      audioTrack.stop();
+      audioTrack.release();
+    }
+  }
+
+  /**
    * Initialize AudioTrack by getting buffersize
    */
   private void initPlayer() {
