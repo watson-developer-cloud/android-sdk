@@ -62,11 +62,14 @@ final class MicrophoneCaptureThread extends Thread {
         AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize);
     record.startRecording();
 
-    try {
-      encoder = new OggOpusEnc(consumer);
-    } catch (Exception e) {
-      e.printStackTrace();
+    if (opusEncoded) {
+      try {
+        encoder = new OggOpusEnc(consumer);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
+
 
     while (!stop) {
       int r = record.read(buffer, 0, buffer.length);
@@ -89,7 +92,7 @@ final class MicrophoneCaptureThread extends Thread {
       bufferBytes.asShortBuffer().put(buffer, 0, r);
       byte[] bytes = bufferBytes.array();
 
-      if(opusEncoded) {
+      if (opusEncoded) {
         try {
           encoder.onStart(); //must be called before writing
           encoder.encodeAndWrite(bytes);
@@ -102,7 +105,9 @@ final class MicrophoneCaptureThread extends Thread {
 
     }
 
-    encoder.close();
+    if (encoder != null) {
+      encoder.close();
+    }
     record.stop();
     record.release();
     stopped = true;

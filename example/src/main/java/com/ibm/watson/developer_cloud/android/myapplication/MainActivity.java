@@ -278,8 +278,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onTranscription(SpeechResults speechResults) {
       System.out.println(speechResults);
-      String text = speechResults.getResults().get(0).getAlternatives().get(0).getTranscript();
-      showMicText(text);
+      if(speechResults.getResults() != null && !speechResults.getResults().isEmpty()) {
+        String text = speechResults.getResults().get(0).getAlternatives().get(0).getTranscript();
+        showMicText(text);
+      }
     }
 
     @Override public void onConnected() {
