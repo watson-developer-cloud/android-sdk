@@ -8,7 +8,9 @@ APIs and SDKs that use cognitive computing to solve complex problems.
   * [Installation](#installation)
     * [Gradle](#gradle)
   * [Usage](#usage)
-  * [Getting the Service Credentials](#getting-the-service-credentials)
+  * [Service Credentials](#service-credentials)
+    * [Getting the Credentials](#getting-the-credentials)
+    * [Adding the Credentials](#adding-the-credentials)
   * [Questions](#questions)
   * [Examples](#examples)
   * [Testing](#testing)
@@ -32,11 +34,13 @@ Now, you are ready to see some [examples](https://github.com/watson-developer-cl
 
 ## Usage
 
-The examples below assume that you already have service credentials. If not,
-you will have to create a service in [Bluemix][bluemix].
+The examples below assume that you already have service credentials. If not, you will have to create a service in [Bluemix][bluemix].
 
-## Getting the Service Credentials
-You will need the `username` and `password` (`api_key` for AlchemyAPI) credentials for each service. Service credentials are different from your Bluemix account username and password.
+## Service Credentials
+
+##### Getting the Credentials
+
+You will need the `username` and `password` (`api_key` for AlchemyAPI) credentials, as well as the `url` for each service. Service credentials are different from your Bluemix account username and password.
 
 To get your service credentials, follow these steps:
  1. Log in to Bluemix at https://bluemix.net.
@@ -48,8 +52,30 @@ To get your service credentials, follow these steps:
 
  1. Copy your credentials:
      1. On the left side of the page, click **Service Credentials** to view your service credentials.
-     1. Copy `username` and `password`(`api_key` for AlchemyAPI).
+     1. Copy `username`, `password`(`api_key` for AlchemyAPI), and `url`.
 
+##### Adding the Credentials
+
+The credentials should be added to the `example/res/values/credentials.xml` file shown below.
+
+```xml
+<resources>
+  <!-- Paste Language Translator information here -->
+  <string name="language_translator_username"></string>
+  <string name="language_translator_password"></string>
+  <string name="language_translator_url"></string>
+
+  <!-- Paste Speech to Text information here -->
+  <string name="speech_text_username"></string>
+  <string name="speech_text_password"></string>
+  <string name="speech_text_url"></string>
+
+  <!-- Paste Text to Speech information here -->
+  <string name="text_speech_username"></string>
+  <string name="text_speech_password"></string>
+  <string name="text_speech_url"></string>
+</resources>
+```
 
 ## Questions
 

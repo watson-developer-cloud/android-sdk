@@ -3,7 +3,7 @@ apply plugin: 'jacoco-android'
 
 android {
   compileSdkVersion 23
-  buildToolsVersion "23.0.2"
+  buildToolsVersion '25.0.0'
 
   configurations.all {
     resolutionStrategy.force 'com.android.support:support-annotations:23.0.1'
@@ -41,6 +41,6 @@ dependencies {
   androidTestCompile ('com.android.support.test.espresso:espresso-core:2.2.2') { exclude group: 'com.android.support', module: 'support-annotations' }
   compile 'com.android.support:appcompat-v7:23.3.0'
   compile 'com.android.support:multidex:1.0.0'
-  compile 'com.ibm.watson.developer_cloud:java-sdk:3.5.3'
+  compile 'com.ibm.watson.developer_cloud:java-sdk:3.8.0'
   compile project(':library')
 }
