@@ -3,7 +3,7 @@ apply plugin: 'jacoco-android'
 
 android {
   compileSdkVersion 25
-  buildToolsVersion '25.0.0'
+  buildToolsVersion '25.0.2'
 
   configurations.all {
     resolutionStrategy.force 'com.android.support:support-annotations:23.0.1'
