@@ -2,8 +2,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'jacoco-android'
 
 android {
-  compileSdkVersion 25
-  buildToolsVersion '25.0.2'
+  compileSdkVersion 23
+  buildToolsVersion '23.0.2'
 
   configurations.all {
     resolutionStrategy.force 'com.android.support:support-annotations:23.0.1'
@@ -13,7 +13,7 @@ android {
     applicationId "com.ibm.watson.developer_cloud.android.myapplication"
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     minSdkVersion 19
-    targetSdkVersion 25
+    targetSdkVersion 22
     versionCode 1
     versionName "1.0"
 
@@ -41,7 +41,7 @@ dependencies {
   androidTestCompile ('com.android.support.test.espresso:espresso-core:2.2.2') {
     exclude group: 'com.android.support', module: 'support-annotations'
   }
-  compile 'com.android.support:appcompat-v7:25.3.1'
+  compile 'com.android.support:appcompat-v7:23.3.0'
   compile 'com.android.support:multidex:1.0.1'
   compile 'com.ibm.watson.developer_cloud:java-sdk:3.8.1-SNAPSHOT'
   compile project(':library')

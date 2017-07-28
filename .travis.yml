@@ -4,10 +4,8 @@ language: android
 android:
   components:
     - tools
-    - platform-tools
-    - tools
-    - build-tools-25.0.2
-    - android-25
+    - build-tools-23.0.2
+    - android-23
     - extra-android-m2repository
 
     - sys-img-armeabi-v7a-android-19
