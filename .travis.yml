@@ -8,6 +8,7 @@ android:
     - android-19
     - android-21
     - android-22
+    - android-23
     - android-24
     - extra-android-m2repository
 
