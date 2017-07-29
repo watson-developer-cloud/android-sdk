@@ -5,8 +5,17 @@ android:
   components:
     - tools
     - build-tools-23.0.2
+    - android-19
+    - android-21
+    - android-22
     - android-23
+    - android-24
     - extra-android-m2repository
+
+    - sys-img-armeabi-v7a-android-19
+    - sys-img-armeabi-v7a-android-21
+    - sys-img-armeabi-v7a-android-22
+    - sys-img-armeabi-v7a-android-24
 
 jdk:
   - oraclejdk8
@@ -16,6 +25,11 @@ cache:
     - $HOME/.gradle/caches/
     
 env:
+  matrix:
+    - API=android-19 ABI=armeabi-v7a
+    - API=android-21 ABI=armeabi-v7a
+    - API=android-22 ABI=armeabi-v7a
+    - API=android-24 ABI=armeabi-v7a
   global:
    # install timeout in minutes (2 minutes by default)
     - ADB_INSTALL_TIMEOUT=8
@@ -28,7 +42,7 @@ script:
 
 before_script:
   - ./gradlew build jacocoTestReport
-  - echo no | android create avd --force -n test -t android-21 --abi armeabi-v7a
+  - echo no | android create avd --force -n test -t $API --abi $ABI
   - emulator -avd test -no-skin -no-audio -no-window &
   - android-wait-for-emulator
   - adb shell input keyevent 82 &

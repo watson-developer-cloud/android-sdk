@@ -9,10 +9,12 @@ import android.net.Uri;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.intent.Intents;
+import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.view.WindowManager;
 import org.hamcrest.Matcher;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,6 +33,7 @@ import static org.hamcrest.CoreMatchers.allOf;
  */
 
 @RunWith(AndroidJUnit4.class)
+@LargeTest
 public class GalleryHelperTest {
 
   private Instrumentation.ActivityResult result;
@@ -66,10 +69,18 @@ public class GalleryHelperTest {
         Activity.RESULT_OK, resultData);
   }
 
+  @Before
+  public void initializeIntents() {
+    Intents.init();
+  }
+
+  @After
+  public void releaseIntents() {
+    Intents.release();
+  }
+
   @Test
   public void testSelectedImageIsSet() {
-
-    Intents.init();
 
     Matcher<Intent> expectedIntent = allOf(hasAction(Intent.ACTION_PICK),
         hasData(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI));
@@ -83,9 +94,5 @@ public class GalleryHelperTest {
       e.printStackTrace();
     }
     intended(expectedIntent);
-
-
-    //intending(hasComponent(String.valueOf(hasAction(MediaStore.ACTION_IMAGE_CAPTURE))));
-    Intents.release();
   }
 }

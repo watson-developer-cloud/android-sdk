@@ -42,7 +42,7 @@ import com.ibm.watson.developer_cloud.language_translator.v2.model.Language;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.SpeechToText;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.model.RecognizeOptions;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechResults;
-import com.ibm.watson.developer_cloud.speech_to_text.v1.websocket.RecognizeCallback;
+import com.ibm.watson.developer_cloud.speech_to_text.v1.websocket.BaseRecognizeCallback;
 import com.ibm.watson.developer_cloud.text_to_speech.v1.TextToSpeech;
 import com.ibm.watson.developer_cloud.text_to_speech.v1.model.Voice;
 
@@ -223,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
     String username = getString(R.string.speech_text_username);
     String password = getString(R.string.speech_text_password);
     service.setUsernameAndPassword(username, password);
-    service.setEndPoint("https://stream.watsonplatform.net/speech-to-text/api");
+    service.setEndPoint(getString(R.string.speech_text_url));
     return service;
   }
 
@@ -232,14 +232,16 @@ public class MainActivity extends AppCompatActivity {
     String username = getString(R.string.text_speech_username);
     String password = getString(R.string.text_speech_password);
     service.setUsernameAndPassword(username, password);
+    service.setEndPoint(getString(R.string.text_speech_url));
     return service;
   }
 
   private LanguageTranslator initLanguageTranslatorService() {
     LanguageTranslator service = new LanguageTranslator();
-    String username = getString(R.string.language_translation_username);
-    String password = getString(R.string.language_translation_password);
+    String username = getString(R.string.language_translator_username);
+    String password = getString(R.string.language_translator_password);
     service.setUsernameAndPassword(username, password);
+    service.setEndPoint(getString(R.string.language_translator_url));
     return service;
   }
 
@@ -273,7 +275,7 @@ public class MainActivity extends AppCompatActivity {
     public abstract void onEmpty(boolean empty);
   }
 
-  private class MicrophoneRecognizeDelegate implements RecognizeCallback {
+  private class MicrophoneRecognizeDelegate extends BaseRecognizeCallback {
 
     @Override
     public void onTranscription(SpeechResults speechResults) {
@@ -282,10 +284,6 @@ public class MainActivity extends AppCompatActivity {
         String text = speechResults.getResults().get(0).getAlternatives().get(0).getTranscript();
         showMicText(text);
       }
-    }
-
-    @Override public void onConnected() {
-
     }
 
     @Override public void onError(Exception e) {
