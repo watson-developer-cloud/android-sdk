@@ -8,17 +8,13 @@ android:
     - android-19
     - android-21
     - android-22
-    - android-23
     - android-24
-    - android-25
     - extra-android-m2repository
 
     - sys-img-armeabi-v7a-android-19
     - sys-img-armeabi-v7a-android-21
     - sys-img-armeabi-v7a-android-22
-    - sys-img-armeabi-v7a-android-23
     - sys-img-armeabi-v7a-android-24
-    - sys-img-armeabi-v7a-android-25
 
 jdk:
   - oraclejdk8
@@ -32,9 +28,7 @@ env:
     - API=android-19 ABI=armeabi-v7a
     - API=android-21 ABI=armeabi-v7a
     - API=android-22 ABI=armeabi-v7a
-    - API=android-23 ABI=armeabi-v7a
     - API=android-24 ABI=armeabi-v7a
-    - API=android-25 ABI=armeabi-v7a
   global:
    # install timeout in minutes (2 minutes by default)
     - ADB_INSTALL_TIMEOUT=8
