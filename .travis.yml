@@ -5,15 +5,9 @@ android:
   - tools
   - build-tools-23.0.2
   - android-19
-  - android-21
-  - android-22
-  - android-23
-  - android-24
   - extra-android-m2repository
   - sys-img-armeabi-v7a-android-19
-  - sys-img-armeabi-v7a-android-21
-  - sys-img-armeabi-v7a-android-22
-  - sys-img-armeabi-v7a-android-24
+  
 jdk:
 - oraclejdk8
 cache:
