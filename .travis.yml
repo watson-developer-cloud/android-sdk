@@ -22,9 +22,6 @@ cache:
 env:
   matrix:
   - API=android-19 ABI=armeabi-v7a
-  - API=android-21 ABI=armeabi-v7a
-  - API=android-22 ABI=armeabi-v7a
-  - API=android-24 ABI=armeabi-v7a
   global:
   - ADB_INSTALL_TIMEOUT=8
 
@@ -63,4 +60,3 @@ deploy:
     tags: true
     repo: lpatino10/android-sdk
   dry-run: true
-  
