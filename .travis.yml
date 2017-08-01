@@ -38,7 +38,7 @@ after_success:
 - bash <(curl -s https://codecov.io/bash)
 
 before_deploy:
-- python .utility/update_version.py $TRAVIS_TAG
+- python .utility/update_version.py $TRAVIS_BUILD_DIR $TRAVIS_TAG
 
 deploy:
 - provider: releases

@@ -3,10 +3,10 @@
 import json
 import sys
 
-filename = 'descriptor.json'
+filename = sys.argv[1] + '/.utility/descriptor.json'
 new_version = {
     'version': {
-        'name': sys.argv[1]
+        'name': sys.argv[2]
     }
 }
 
