@@ -2,7 +2,7 @@
   "files": [
     {
       "uploadPattern": "$1",
-      "includePattern": "../library/(.*)"
+      "includePattern": "library/(.*)"
     }
   ],
   "version": {
