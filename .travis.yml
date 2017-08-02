@@ -1,51 +1,63 @@
 sudo: required
 language: android
-
 android:
   components:
-    - tools
-    - build-tools-23.0.2
-    - android-19
-    - android-21
-    - android-22
-    - android-23
-    - android-24
-    - extra-android-m2repository
-
-    - sys-img-armeabi-v7a-android-19
-    - sys-img-armeabi-v7a-android-21
-    - sys-img-armeabi-v7a-android-22
-    - sys-img-armeabi-v7a-android-24
+  - tools
+  - build-tools-23.0.2
+  - android-19
+  - android-21
+  - android-22
+  - android-23
+  - android-24
+  - extra-android-m2repository
+  - sys-img-armeabi-v7a-android-19
+  - sys-img-armeabi-v7a-android-21
+  - sys-img-armeabi-v7a-android-22
+  - sys-img-armeabi-v7a-android-24
 
 jdk:
-  - oraclejdk8
-
+- oraclejdk8
 cache:
   directories:
-    - $HOME/.gradle/caches/
-    
+  - "$HOME/.gradle/caches/"
 env:
   matrix:
-    - API=android-19 ABI=armeabi-v7a
-    - API=android-21 ABI=armeabi-v7a
-    - API=android-22 ABI=armeabi-v7a
-    - API=android-24 ABI=armeabi-v7a
+  - API=android-19 ABI=armeabi-v7a
+  - API=android-21 ABI=armeabi-v7a
+  - API=android-22 ABI=armeabi-v7a
+  - API=android-24 ABI=armeabi-v7a
   global:
-   # install timeout in minutes (2 minutes by default)
-    - ADB_INSTALL_TIMEOUT=8
-    
-install:
-  - true
+  - ADB_INSTALL_TIMEOUT=8
+
+install: true
 
 script:
-  - ./gradlew build
-
-before_script:
-  - ./gradlew build jacocoTestReport
-  - echo no | android create avd --force -n test -t $API --abi $ABI
-  - emulator -avd test -no-skin -no-audio -no-window &
-  - android-wait-for-emulator
-  - adb shell input keyevent 82 &
+- ./gradlew build jacocoTestReport
+- echo no | android create avd --force -n test -t $API --abi $ABI
+- emulator -avd test -no-skin -no-audio -no-window &
+- android-wait-for-emulator
+- adb shell input keyevent 82 &
 
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
+- bash <(curl -s https://codecov.io/bash)
+
+before_deploy:
+- python .utility/update_version.py $TRAVIS_BUILD_DIR $TRAVIS_TAG
+
+deploy:
+- provider: releases
+  api_key:
+    secure: "HXaZfCf7329lbrfETslmBmq7gaRv4CJ9qZiLdeHPANyo+yUtAQCaSdq0vVroMCbqKNhe7PTnWh6Fyf/d7YodCu7s+WHrsETWWnUNuYi9+PGp7+IIZg7vdHIlQbk0q5upIkmX4sdlwPCNdbdeR5EoTDcfbiv+dafaNijactEoSw5l1JOAEcXDXbhW1svxT2X4iI+vj5x9JFfWGIfQ6he5DPW2lAZ12LnFh9cxdjY7JUAEb+Vq5moWpyKXxE9eZkuneAR2xyPKYpCpooYJRYu2hg5cxUaMCSMfd6SZRDwyPLjgUmRpDUuTSj1R5o9YuXlIdESLB/VM6gTlzwCdwx2iPPikOk50xOjikkhQ0lNR87x6KVsa05J9LP5QgvN5ep+85xzJGnPAfRS+pOs+6m3oo0dJKYyxTQtG3v0u85wweww2AHFdsicZtxKXX7ZXePEmwCX45ZYMPf694tFEsYM5GqA3IxatXNy/GSWqronIPu0OYZg9seQQ5cXnOwYQ4xxwVs4jdydIKBwAEid5KhZEq+OrNLHR1pCv1J6fM2SkryCHwDREUx/sLinl/5HxbmSFTXEutu9s9D/hk8FdrJTLZGmqX3wfFXrVOuWrzHlIMCc1a2HLb5DTMn/04Sglm5mH20RyeFfRFT9tLs9EN1oBYnxV/faMpYupFhCZ2o5Db6w="
+  skip_cleanup: true
+  on:
+    tags: true
+    repo: watson-developer-cloud/android-sdk
+- provider: bintray
+  file: $TRAVIS_BUILD_DIR/.utility/descriptor.json
+  user: lpatino10
+  key: 
+    secure: "GgkyRI9L+OeaM77vpkrno3j1u7EsMKLXoSZL+1YxgUChADWrEUkksldCApit7JnIzatihce/8B/J+T7ySOE4hO4l7o7qdoy/yNbwuEx3ROCwq8G/nsYGvIp50xSiDPkwEF3xidRh0iee2kOq3pWOP1RiRIGPZ6g3lQ5W90JTh1LQ7D9PAxRmqmmCnv+9Z48cMjFQCSFP6ymm3oxGh6yIY9uosnlle1hm/obQyysDS7iRTws/mNx4fZcnAfUBHE0epcpASP60wOZzmBbq2tvSdD5M5eMK6c9PBhinJ397YOI4MeTVzGqW0qXQLKVnyh4CwoVVqsNTdIG8VSs6ObL32zDoQaJgbhjVQI0wgFer7BK4x9t+VgXc6A2L+cjeDRDJKBVDrf0wPUIeQmZ87Dhu7P/QwEwRAK2YrlxP3atlEFgoV2Dy/MVbFl1JDQf8idJw4/+bqxyCcf3G7J4e7qWiU/qXhlx7Fx6kMFd2I/r4HlDsNmG1m/TzKSJY6kuBmLIzTUW8iu9TL3WhuFIuR2R3eyLNYwmR8s/YJL/WOy/xqhUUg/886rI+rirxcxKrRh0U4uKT5fsxnqLT5DR6ZspcUnfRLAoh2BlKtbue2T+FWuO2DoHehk6pZdZYmoBYtJsFBmKOXoj2U3jcRSMQkPNqumzTV2TS2xHAFkGSrpe+GMQ="
+  skip_cleanup: true
+  on:
+    tags: true
+    repo: watson-developer-cloud/android-sdk

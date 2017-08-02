@@ -1,0 +1,20 @@
+{
+  "files": [
+    {
+      "uploadPattern": "$1",
+      "includePattern": "library/(.*)"
+    }
+  ],
+  "version": {
+    "name": "0.3.0"
+  },
+  "publish": true,
+  "package": {
+    "vcs_url": "https://github.com/watson-developer-cloud/android-sdk.git",
+    "repo": "watson-developer-cloud",
+    "issue_tracker_url": "https://github.com/watson-developer-cloud/android-sdk/issues",
+    "subject": "ibmwatson",
+    "website_url": "https://github.com/watson-developer-cloud/android-sdk",
+    "name": "android-sdk"
+  }
+}
