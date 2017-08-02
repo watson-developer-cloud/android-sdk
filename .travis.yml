@@ -14,7 +14,7 @@ android:
   - sys-img-armeabi-v7a-android-21
   - sys-img-armeabi-v7a-android-22
   - sys-img-armeabi-v7a-android-24
-  
+
 jdk:
 - oraclejdk8
 cache:
