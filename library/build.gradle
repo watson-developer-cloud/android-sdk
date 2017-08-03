@@ -1,14 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.novoda.bintray-release'
-
-publish {
-  userOrg = 'milbuild'
-  groupId = 'com.ibm.watson.developer_cloud'
-  artifactId = 'android-sdk'
-  publishVersion = '0.2.3'
-  desc = 'A utility library for use with the Watson Java SDK'
-  website = 'https://github.com/watson-developer-cloud/android-sdk'
-}
 
 android {
   compileSdkVersion 23
