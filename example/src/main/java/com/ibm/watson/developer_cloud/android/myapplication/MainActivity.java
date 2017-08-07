@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
       @Override public void onClick(View v) {
         //mic.setEnabled(false);
 
-        if(listening != true) {
+        if(listening) {
           capture = new MicrophoneInputStream(true);
           new Thread(new Runnable() {
             @Override public void run() {
@@ -328,13 +328,12 @@ public class MainActivity extends AppCompatActivity {
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
 
-    if (requestCode == CameraHelper.REQUEST_IMAGE_CAPTURE) {
+    if (requestCode == CameraHelper.REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
       loadedImage.setImageBitmap(cameraHelper.getBitmap(resultCode));
     }
 
-    if (requestCode == GalleryHelper.PICK_IMAGE_REQUEST) {
+    if (requestCode == GalleryHelper.PICK_IMAGE_REQUEST && resultCode == RESULT_OK) {
       loadedImage.setImageBitmap(galleryHelper.getBitmap(resultCode, data));
     }
   }
-
 }
