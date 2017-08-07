@@ -12,6 +12,8 @@ import android.util.Log;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import static android.app.Activity.RESULT_OK;
+
 public final class GalleryHelper {
 
   private final String TAG = GalleryHelper.class.getName();
@@ -46,7 +48,7 @@ public final class GalleryHelper {
    * @return An image's file if successful, null otherwise
    */
   public File getFile(int resultCode, Intent data) {
-    if(resultCode == activity.RESULT_OK) {
+    if(resultCode == RESULT_OK) {
       Uri targetUri = data.getData();
       return new File(getRealPathFromURI(targetUri));
     }
@@ -63,7 +65,7 @@ public final class GalleryHelper {
    * @return A bitmap image if successfully completed, null otherwise
    */
   public Bitmap getBitmap(int resultCode, Intent data) {
-    if(resultCode == activity.RESULT_OK) {
+    if(resultCode == RESULT_OK) {
       Uri targetUri = data.getData();
       try {
         return BitmapFactory.decodeStream(activity.getContentResolver().openInputStream(targetUri));

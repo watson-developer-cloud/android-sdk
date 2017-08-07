@@ -6,16 +6,21 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+
+import static android.app.Activity.RESULT_OK;
 
 public final class CameraHelper {
 
@@ -51,8 +56,16 @@ public final class CameraHelper {
         }
         // Continue only if the File was successfully created
         if (photoFile != null) {
-          takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-                  Uri.fromFile(photoFile));
+          Uri photoURI;
+          if (Build.VERSION.SDK_INT >= 24) {
+            photoURI = FileProvider.getUriForFile(activity,
+                    "com.ibm.watson.developer_cloud.android.provider",
+                    photoFile);
+          }
+          else {
+            photoURI = Uri.fromFile(photoFile);
+          }
+          takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
           activity.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
       }
@@ -77,7 +90,7 @@ public final class CameraHelper {
 
   private File createImageFile() throws IOException {
     // Create an image file name
-    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
     String imageFileName = "JPEG_" + timeStamp + "_";
     File storageDir = Environment.getExternalStoragePublicDirectory(
         Environment.DIRECTORY_PICTURES);
@@ -98,7 +111,8 @@ public final class CameraHelper {
    * @return If successful, the image file. Null otherwise.
    */
   public File getFile(int resultCode) {
-    if(resultCode == activity.RESULT_OK) {
+    Log.d("Result code test", Integer.toString(resultCode));
+    if(resultCode == RESULT_OK) {
       Uri targetUri = Uri.parse(currentPhotoPath);
       return new File(targetUri.getPath());
     }
@@ -113,7 +127,7 @@ public final class CameraHelper {
    * @return If successful, a bitmap of the image. Null otherwise.
    */
   public Bitmap getBitmap(int resultCode) {
-    if(resultCode == activity.RESULT_OK) {
+    if(resultCode == RESULT_OK) {
       Uri targetUri = Uri.parse(currentPhotoPath);
       try {
         return BitmapFactory.decodeStream(activity.getContentResolver().openInputStream(targetUri));

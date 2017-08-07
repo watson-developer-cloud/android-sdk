@@ -88,7 +88,7 @@ You can also check out the [wiki][wiki] for some additional information.
 
 ## Examples
 This SDK is built for use with the [java-sdk][java-sdk].
-The examples below are specific for Android as they use the Microphone and Speaker; for actual services refer to the [java-sdk][java-sdk].
+The examples below are specific for Android as they use the Microphone and Speaker; for actual services refer to the [java-sdk][java-sdk]. Be sure to use the provided example app as a model for your own Android app using Watson services.
 
 #### Microphone Input Stream
 Convience function for creating an `InputStream` from device microphone. You can record raw PCM data or data encoded using the ogg codec.
