@@ -88,17 +88,24 @@ You can also check out the [wiki][wiki] for some additional information.
 
 ## Examples
 This SDK is built for use with the [java-sdk][java-sdk].
+
 The examples below are specific for Android as they use the Microphone and Speaker; for actual services refer to the [java-sdk][java-sdk]. Be sure to use the provided example app as a model for your own Android app using Watson services.
 
-#### Microphone Input Stream
-Convience function for creating an `InputStream` from device microphone. You can record raw PCM data or data encoded using the ogg codec.
+#### MicrophoneHelper
+Provides simple microphone access within an activity.
 
 ```java
-// record PCM data
-InputStream myInputStream = new MicrophoneInputStream();
+MicrophoneHelper microphoneHelper = new MicrophoneHelper(this);
+```
+
+The MicrophoneHelper object allows you to create new MicrophoneInputStream objects and close them. The MicrophoneInputStream class is a convenience class for creating an `InputStream` from device microphone. You can record raw PCM data or data encoded using the ogg codec.
+
+```java
+// record PCM data without encoding
+MicrophoneInputStream myInputStream = microphoneHelper.getInputStream(false);
 
 // record PCM data and encode it with the ogg codec
-InputStream myOggStream = new MicrophoneInputStream(true);
+MicrophoneInputStream myOggStream = microphoneHelper.getInputStream(true);
 ```
 
 An example using a Watson Developer Cloud service would look like
@@ -122,14 +129,16 @@ getRecognizeOptions(), new BaseRecognizeCallback() {
 });
 ```
 
-##StreamPlayer
+Be sure to take a look at the example app to get a working example of putting these all together.
+
+####StreamPlayer
 Provides the ability to directly play an InputStream
 ```java
 StreamPlayer player = new StreamPlayer();
 player.playStream(yourInputStream);
 ```
 
-##CameraHelper
+####CameraHelper
 Provides simple camera access within an activity.
 
 ```java
@@ -146,7 +155,7 @@ cameraHelper.dispatchTakePictureIntent();
   }
 ```
 
-##GalleryHelper
+####GalleryHelper
 Like the CameraHelper, but allows for selection of images already on the device.
 
 To open the gallery:
@@ -226,3 +235,4 @@ See [CONTRIBUTING.md](.github/CONTRIBUTING.md).
 [wiki]: https://github.com/watson-developer-cloud/android-sdk/wiki
 
 [aar]: https://github.com/watson-developer-cloud/android-sdk/blob/master/releases/download/android-sdk-0.2.1-aar-with-dependencies.aar
+

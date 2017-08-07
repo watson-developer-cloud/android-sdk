@@ -38,19 +38,6 @@ public final class MicrophoneInputStream extends InputStream implements AudioCon
 
   private AmplitudeListener amplitudeListener;
 
-  public MicrophoneInputStream() {
-    captureThread = new MicrophoneCaptureThread(this, false);
-    CONTENT_TYPE = ContentType.RAW;
-    os = new PipedOutputStream();
-    is = new PipedInputStream();
-    try {
-      is.connect(os);
-    } catch (IOException e) {
-      Log.e(TAG, e.getMessage());
-    }
-    captureThread.start();
-  }
-
   public MicrophoneInputStream(boolean opusEncoded) {
     captureThread = new MicrophoneCaptureThread(this, opusEncoded);
     if(opusEncoded == true) {
