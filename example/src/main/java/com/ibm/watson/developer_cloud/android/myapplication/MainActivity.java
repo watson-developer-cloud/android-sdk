@@ -32,6 +32,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ibm.watson.developer_cloud.android.library.audio.MicrophoneHelper;
 import com.ibm.watson.developer_cloud.android.library.audio.MicrophoneInputStream;
 import com.ibm.watson.developer_cloud.android.library.audio.StreamPlayer;
 import com.ibm.watson.developer_cloud.android.library.audio.utils.ContentType;
@@ -67,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
   private StreamPlayer player = new StreamPlayer();
   private CameraHelper cameraHelper;
   private GalleryHelper galleryHelper;
+  private MicrophoneHelper microphoneHelper;
 
   private MicrophoneInputStream capture;
   private boolean listening = false;
@@ -77,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
     cameraHelper = new CameraHelper(this);
     galleryHelper = new GalleryHelper(this);
+    microphoneHelper = new MicrophoneHelper(this);
 
     speechService = initSpeechToTextService();
     textService = initTextToSpeechService();
@@ -122,8 +125,8 @@ public class MainActivity extends AppCompatActivity {
       @Override public void onClick(View v) {
         //mic.setEnabled(false);
 
-        if(listening) {
-          capture = new MicrophoneInputStream(true);
+        if(!listening) {
+          capture = microphoneHelper.getInputStream(true);
           new Thread(new Runnable() {
             @Override public void run() {
               try {
@@ -135,13 +138,8 @@ public class MainActivity extends AppCompatActivity {
           }).start();
           listening = true;
         } else {
-          try {
-            capture.close();
-            listening = false;
-          } catch (Exception e) {
-            e.printStackTrace();
-          }
-
+          microphoneHelper.closeInputStream();
+          listening = false;
         }
       }
     });
@@ -319,6 +317,11 @@ public class MainActivity extends AppCompatActivity {
         // permission granted
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
           cameraHelper.dispatchTakePictureIntent();
+        }
+      }
+      case MicrophoneHelper.REQUEST_PERMISSION: {
+        if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+          Toast.makeText(this, "Permission to record audio denied", Toast.LENGTH_SHORT).show();
         }
       }
     }

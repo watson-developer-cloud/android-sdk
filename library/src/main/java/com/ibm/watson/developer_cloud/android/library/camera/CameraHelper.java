@@ -57,7 +57,7 @@ public final class CameraHelper {
         // Continue only if the File was successfully created
         if (photoFile != null) {
           Uri photoURI;
-          if (Build.VERSION.SDK_INT >= 24) {
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             photoURI = FileProvider.getUriForFile(activity,
                     "com.ibm.watson.developer_cloud.android.provider",
                     photoFile);
