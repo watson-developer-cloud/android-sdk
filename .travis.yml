@@ -44,8 +44,7 @@ after_success:
 
 deploy:
 - provider: releases
-  api_key:
-    secure: "HXaZfCf7329lbrfETslmBmq7gaRv4CJ9qZiLdeHPANyo+yUtAQCaSdq0vVroMCbqKNhe7PTnWh6Fyf/d7YodCu7s+WHrsETWWnUNuYi9+PGp7+IIZg7vdHIlQbk0q5upIkmX4sdlwPCNdbdeR5EoTDcfbiv+dafaNijactEoSw5l1JOAEcXDXbhW1svxT2X4iI+vj5x9JFfWGIfQ6he5DPW2lAZ12LnFh9cxdjY7JUAEb+Vq5moWpyKXxE9eZkuneAR2xyPKYpCpooYJRYu2hg5cxUaMCSMfd6SZRDwyPLjgUmRpDUuTSj1R5o9YuXlIdESLB/VM6gTlzwCdwx2iPPikOk50xOjikkhQ0lNR87x6KVsa05J9LP5QgvN5ep+85xzJGnPAfRS+pOs+6m3oo0dJKYyxTQtG3v0u85wweww2AHFdsicZtxKXX7ZXePEmwCX45ZYMPf694tFEsYM5GqA3IxatXNy/GSWqronIPu0OYZg9seQQ5cXnOwYQ4xxwVs4jdydIKBwAEid5KhZEq+OrNLHR1pCv1J6fM2SkryCHwDREUx/sLinl/5HxbmSFTXEutu9s9D/hk8FdrJTLZGmqX3wfFXrVOuWrzHlIMCc1a2HLb5DTMn/04Sglm5mH20RyeFfRFT9tLs9EN1oBYnxV/faMpYupFhCZ2o5Db6w="
+  api_key: $GITHUB_TOKEN
   file:
     - $TRAVIS_BUILD_DIR/library/build/outputs/aar/library-debug.aar
     - $TRAVIS_BUILD_DIR/library/build/outputs/aar/library-release.aar
