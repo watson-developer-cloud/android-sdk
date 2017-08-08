@@ -52,7 +52,7 @@ deploy:
   on:
     tags: true
     repo: lpatino10/android-sdk
-    condition: "$API = android-24"
+    condition: "$API = android-19"
 - provider: bintray
   file: $TRAVIS_BUILD_DIR/descriptor.json
   user: lpatino10
