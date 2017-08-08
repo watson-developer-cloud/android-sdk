@@ -45,6 +45,8 @@ jobs:
     - script: echo "Deploying to GitHub releases..."
     - API: android-24
     - ABI: armeabi-v7a
+    - ADB_INSTALL_TIMEOUT: 8
+    - jdk: oraclejdk8
 
 after_success:
 - bash <(curl -s https://codecov.io/bash)
