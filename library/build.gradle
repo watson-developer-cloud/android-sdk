@@ -1,5 +1,16 @@
 apply plugin: 'com.android.library'
 
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath 'com.vanniktech:gradle-android-javadoc-plugin:0.2.1'
+  }
+}
+
+apply plugin: 'com.vanniktech.android.javadoc'
+
 android {
   compileSdkVersion 26
   buildToolsVersion '26.0.1'
