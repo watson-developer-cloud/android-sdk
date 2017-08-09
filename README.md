@@ -27,7 +27,7 @@ APIs and SDKs that use cognitive computing to solve complex problems.
 
 ##### AAR
 
-Download the aar with dependencies [here][aar].
+Download the aar [here][aar].
 
 -----
 The minimum supported Android API level is 19. Now, you are ready to see some [examples](https://github.com/watson-developer-cloud/android-sdk/tree/master/example).
