@@ -10,8 +10,9 @@ if [ "$TRAVIS_REPO_SLUG" == "watson-developer-cloud/android-sdk" ] && [ "$TRAVIS
     # on tagged builds, $TRAVIS_BRANCH is the tag (e.g. v1.2.3), otherwise it's the branch name (e.g. master)
     rm -rf docs/$TRAVIS_BRANCH
     mkdir -p docs/$TRAVIS_BRANCH
-
-    cp -rf ../library/javaDoc/release/* docs/$TRAVIS_BRANCH
+    echo "Current directory"
+    pwd
+    cp -rf ../library/javaDoc/debug/* docs/$TRAVIS_BRANCH
     ../.utility/generate_index_html.sh > index.html
 
 	# update the latest/ symlink
