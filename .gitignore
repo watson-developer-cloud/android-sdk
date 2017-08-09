@@ -28,5 +28,11 @@ proguard/
 *.iml
 .idea
 
-# generated javadoc
-library/javaDoc
+.github
+.gradle
+.idea
+.settings
+.utility
+.bumpversion.cfg
+.project
+.travis.yml
