@@ -34,6 +34,7 @@ install: true
 
 script:
 - ./gradlew build jacocoTestReport
+- ./gradlew generateReleaseJavadoc
 - echo no | android create avd --force -n test -t $API --abi $ABI
 - emulator -avd test -no-skin -no-audio -no-window &
 - android-wait-for-emulator
@@ -41,6 +42,7 @@ script:
 
 after_success:
 - bash <(curl -s https://codecov.io/bash)
+- .utility/push-javadoc-to-gh-pages.sh
 
 deploy:
 - provider: releases
