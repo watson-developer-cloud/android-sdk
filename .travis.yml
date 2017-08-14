@@ -55,7 +55,7 @@ deploy:
     condition: "$API = android-19"
 - provider: bintray
   file: $TRAVIS_BUILD_DIR/descriptor.json
-  user: lpatino10
+  user: milbuild
   key: $BINTRAY_KEY
   skip_cleanup: true
   on:

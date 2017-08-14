@@ -1,9 +1,9 @@
 {
   "package": {
     "vcs_url": "https://github.com/watson-developer-cloud/android-sdk.git",
-    "repo": "watson-developer-cloud",
+    "repo": "maven",
     "issue_tracker_url": "https://github.com/watson-developer-cloud/android-sdk/issues",
-    "subject": "ibmwatson",
+    "subject": "milbuild",
     "website_url": "https://github.com/watson-developer-cloud/android-sdk",
     "name": "android-sdk"
   },
