@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'maven-publish'
 
 buildscript {
   repositories {
@@ -46,3 +47,48 @@ dependencies {
     transitive=true
   }
 }
+
+publishing {
+  publications {
+    aar(MavenPublication) {
+      groupId 'com.ibm.watson.developer_cloud'
+      version projectVersion
+      artifactId 'android-sdk'
+      artifact("$buildDir/outputs/aar/${project.getName()}-release.aar")
+
+      pom.withXml {
+        def dependencies = asNode().appendNode('dependencies')
+        configurations.getByName("_releaseCompile").getResolvedConfiguration().getFirstLevelModuleDependencies().each {
+          def dependency = dependencies.appendNode('dependency')
+          dependency.appendNode('groupId', it.moduleGroup)
+          dependency.appendNode('artifactId', it.moduleName)
+          dependency.appendNode('version', it.moduleVersion)
+        }
+      }
+    }
+  }
+}
+
+model {
+  tasks.generatePomFileForAarPublication {
+    destination = file("$buildDir/android-sdk.pom")
+  }
+}
+
+task generateSourcesJar(type: Jar) {
+  from android.sourceSets.main.java.srcDirs
+  classifier 'sources'
+}
+
+task generateJavadocs(type: Javadoc) {
+  source = android.sourceSets.main.java.srcDirs
+  classpath += project.files(android.getBootClasspath()
+          .join(File.pathSeparator))
+}
+
+task generateJavadocsJar(type: Jar) {
+  from generateJavadocs.destinationDir
+  classifier 'javadoc'
+}
+
+generateJavadocsJar.dependsOn generateJavadocs

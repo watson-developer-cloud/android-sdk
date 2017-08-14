@@ -9,13 +9,25 @@
   },
 
   "version": {
-    "name": "0.5.0"
+    "name": "0.4.1"
   },
 
   "files": [
     {
-      "uploadPattern": "com/ibm/watson/developer-cloud/android-sdk/0.5.0",
+      "uploadPattern": "com/ibm/watson/developer_cloud/android-sdk/0.4.1/android-sdk-0.4.1-javadoc.jar",
+      "includePattern": "library/build/libs/library-javadoc.jar"
+    },
+    {
+      "uploadPattern": "com/ibm/watson/developer_cloud/android-sdk/0.4.1/android-sdk-0.4.1-sources.jar",
+      "includePattern": "library/build/libs/library-sources.jar"
+    },
+    {
+      "uploadPattern": "com/ibm/watson/developer_cloud/android-sdk/0.4.1/android-sdk-0.4.1.aar",
       "includePattern": "library/build/outputs/aar/library-release.aar"
+    },
+    {
+      "uploadPattern": "com/ibm/watson/developer_cloud/android-sdk/0.4.1/android-sdk-0.4.1.pom",
+      "includePattern": "library/build/android-sdk.pom"
     }
   ],
   
