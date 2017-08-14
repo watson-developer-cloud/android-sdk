@@ -22,7 +22,7 @@ APIs and SDKs that use cognitive computing to solve complex problems.
 ##### Gradle
 
 ```gradle
-'com.ibm.watson.developer_cloud:android-sdk:0.4.1'
+'com.ibm.watson.developer_cloud:android-sdk:0.5.0'
 ```
 
 ##### AAR
@@ -222,4 +222,4 @@ See [CONTRIBUTING.md](.github/CONTRIBUTING.md).
 [releases]: https://github.com/watson-developer-cloud/android-sdk/releases
 [wiki]: https://github.com/watson-developer-cloud/android-sdk/wiki
 
-[aar]: https://github.com/watson-developer-cloud/android-sdk/releases/download/v0.4.1/library-release.aar
+[aar]: https://github.com/watson-developer-cloud/android-sdk/releases/download/v0.5.0/library-release.aar
