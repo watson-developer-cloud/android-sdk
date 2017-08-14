@@ -30,3 +30,5 @@ proguard/
 
 # generated javadoc
 library/javaDoc
+
+.vscode/settings.json
