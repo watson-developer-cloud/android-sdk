@@ -33,11 +33,9 @@ env:
 install: true
 
 script:
-- cd library
-- gradle generateJavadocsJar
-- gradle generateSourcesJar
-- gradle generatePomFileForAarPublication
-- cd ..
+- ./gradlew generateJavadocsJar
+- ./gradlew generateSourcesJar
+- ./gradlew generatePomFileForAarPublication
 - ./gradlew build jacocoTestReport
 - ./gradlew generateReleaseJavadoc
 - echo no | android create avd --force -n test -t $API --abi $ABI
