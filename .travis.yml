@@ -8,13 +8,11 @@ android:
   - android-21
   - android-22
   - android-23
-  - android-24
   - android-26
   - extra-android-m2repository
   - sys-img-armeabi-v7a-android-19
   - sys-img-armeabi-v7a-android-21
   - sys-img-armeabi-v7a-android-22
-  - sys-img-armeabi-v7a-android-24
 
 jdk:
 - oraclejdk8
@@ -26,7 +24,6 @@ env:
   - API=android-19 ABI=armeabi-v7a
   - API=android-21 ABI=armeabi-v7a
   - API=android-22 ABI=armeabi-v7a
-  - API=android-24 ABI=armeabi-v7a
   global:
   - ADB_INSTALL_TIMEOUT=8
 
@@ -40,7 +37,7 @@ script:
 - ./gradlew generateReleaseJavadoc
 - echo no | android create avd --force -n test -t $API --abi $ABI
 - emulator -avd test -no-skin -no-audio -no-window &
-- travis_wait android-wait-for-emulator
+- android-wait-for-emulator
 - adb shell input keyevent 82 &
 
 after_success:
