@@ -78,8 +78,10 @@ public final class StreamPlayer {
    */
   public void interrupt() {
     if (audioTrack != null) {
+      if (audioTrack.getState() == AudioTrack.STATE_INITIALIZED || audioTrack.getState() == AudioTrack.PLAYSTATE_PLAYING) {
+        audioTrack.pause();
+      }
       audioTrack.flush();
-      audioTrack.stop();
       audioTrack.release();
     }
   }
