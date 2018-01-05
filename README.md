@@ -1,6 +1,6 @@
 # IBM Watson Developer Cloud Android SDK [![Build Status](https://travis-ci.org/watson-developer-cloud/android-sdk.svg?branch=master)](https://travis-ci.org/watson-developer-cloud/android-sdk)
 
-Android client library to assist with using the [Watson Developer Cloud][wdc] services, a collection of REST
+Android client library to assist with using the [Watson][wdc] services, a collection of REST
 APIs and SDKs that use cognitive computing to solve complex problems.
 
 ## Table of Contents
@@ -34,26 +34,26 @@ The minimum supported Android API level is 19. Now, you are ready to see some [e
 
 ## Usage
 
-The examples below assume that you already have service credentials. If not, you will have to create a service in [Bluemix][bluemix].
+The examples below assume that you already have service credentials. If not, you will have to create a service in [IBM Cloud][bluemix].
 
 ## Service Credentials
 
 #### Getting the Credentials
 
-You will need the `username` and `password` (`api_key` for AlchemyAPI) credentials, as well as the `url` for each service. Service credentials are different from your Bluemix account username and password.
+You will need the `username` and `password` (`api_key` for Visual Recognition) credentials, as well as the `url` for each service. Service credentials are different from your IBM Cloud account username and password.
 
 To get your service credentials, follow these steps:
 
- 1. Log in to Bluemix at [https://console.bluemix.net](https://console.bluemix.net).
+ 1. Log in to IBM Cloud at [https://console.bluemix.net](https://console.bluemix.net).
 
  1. Create an instance of the service:
-     1. In the Bluemix **Catalog**, select the service you want to use.
+     1. In the IBM Cloud **Catalog**, select the service you want to use.
      1. Under **Add Service**, type a unique name for the service instance in the Service name field. For example, type `my-service-name`. Leave the default values for the other options.
      1. Click **Create**.
 
  1. Copy your credentials:
      1. On the left side of the page, click **Service Credentials** to view your service credentials.
-     1. Copy `username`, `password`(`api_key` for AlchemyAPI), and `url`.
+     1. Copy `username`, `password`(`api_key` for Visual Recognition), and `url`.
 
 #### Adding the Credentials
 
@@ -213,7 +213,7 @@ available in [LICENSE](LICENSE).
 
 See [CONTRIBUTING.md](.github/CONTRIBUTING.md).
 
-[wdc]: http://www.ibm.com/watson/developercloud/
+[wdc]: https://www.ibm.com/watson/developer/
 [java-sdk]: https://github.com/watson-developer-cloud/java-sdk
 [bluemix]: https://console.bluemix.net
 [Gradle]: http://www.gradle.org/
