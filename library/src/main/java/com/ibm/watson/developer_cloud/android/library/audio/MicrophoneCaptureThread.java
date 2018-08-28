@@ -22,6 +22,8 @@ import com.ibm.watson.developer_cloud.android.library.audio.opus.OggOpusEnc;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Dedicated thread for capturing raw audio data from the microphone. Captured data is passed to an
@@ -36,6 +38,8 @@ final class MicrophoneCaptureThread extends Thread {
   private OggOpusEnc encoder;
   private boolean stop;
   private boolean stopped;
+  /** Used to signal when the thread is complete. */
+  private ReentrantLock running = new ReentrantLock();
 
   /**
    * This only initializes data associated with the thread. To start recording microphone data, call {@link #start()}.
@@ -71,47 +75,51 @@ final class MicrophoneCaptureThread extends Thread {
       }
     }
 
+    try {
+      running.lock();
+      while (!stop) {
+        int r = record.read(buffer, 0, buffer.length);
 
-    while (!stop) {
-      int r = record.read(buffer, 0, buffer.length);
-
-      // calculate amplitude and volume
-      long v = 0;
-      for (int i = 0; i < r; i++) {
-        v += buffer[i] * buffer[i];
-      }
-
-      double amplitude = v / (double) r;
-      double volume = 0;
-      if (amplitude > 0) {
-        volume = 10 * Math.log10(amplitude);
-      }
-
-      // convert short buffer to bytes
-      ByteBuffer bufferBytes = ByteBuffer.allocate(r * 2); // 2 bytes per short
-      bufferBytes.order(ByteOrder.LITTLE_ENDIAN); // save little-endian byte from short buffer
-      bufferBytes.asShortBuffer().put(buffer, 0, r);
-      byte[] bytes = bufferBytes.array();
-
-      if (opusEncoded) {
-        try {
-          encoder.onStart(); // must be called before writing
-          encoder.encodeAndWrite(bytes);
-        } catch (Exception e) {
-          e.printStackTrace();
+        // calculate amplitude and volume
+        long v = 0;
+        for (int i = 0; i < r; i++) {
+          v += buffer[i] * buffer[i];
         }
-      } else {
-        consumer.consume(bytes, amplitude, volume);
+
+        double amplitude = v / (double) r;
+        double volume = 0;
+        if (amplitude > 0) {
+          volume = 10 * Math.log10(amplitude);
+        }
+
+        // convert short buffer to bytes
+        ByteBuffer bufferBytes = ByteBuffer.allocate(r * 2); // 2 bytes per short
+        bufferBytes.order(ByteOrder.LITTLE_ENDIAN); // save little-endian byte from short buffer
+        bufferBytes.asShortBuffer().put(buffer, 0, r);
+        byte[] bytes = bufferBytes.array();
+
+        if (opusEncoded) {
+          try {
+            encoder.onStart(); // must be called before writing
+            encoder.encodeAndWrite(bytes);
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
+        } else {
+          consumer.consume(bytes, amplitude, volume);
+        }
+
       }
 
+      if (encoder != null) {
+        encoder.close();
+      }
+      record.stop();
+      record.release();
+    } finally {
+      stopped = true;
+      running.unlock(); // Release anyone waiting in the end() call
     }
-
-    if (encoder != null) {
-      encoder.close();
-    }
-    record.stop();
-    record.release();
-    stopped = true;
   }
 
   /**
@@ -121,11 +129,13 @@ final class MicrophoneCaptureThread extends Thread {
   public void end() {
     stop = true;
 
-    while (!stopped) {
+    if (!stopped) {
       try {
-        Thread.sleep(10);
+        running.tryLock(10, TimeUnit.SECONDS);
       } catch (InterruptedException e) {
         Log.e(TAG, e.getMessage());
+      } finally {
+        running.unlock();
       }
     }
   }
