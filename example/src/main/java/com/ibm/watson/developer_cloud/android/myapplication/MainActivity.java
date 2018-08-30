@@ -15,6 +15,7 @@ package com.ibm.watson.developer_cloud.android.myapplication;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -43,6 +44,8 @@ import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechResults;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.websocket.BaseRecognizeCallback;
 import com.ibm.watson.developer_cloud.text_to_speech.v1.TextToSpeech;
 import com.ibm.watson.developer_cloud.text_to_speech.v1.model.Voice;
+
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
   private final String TAG = "MainActivity";
@@ -133,6 +136,13 @@ public class MainActivity extends AppCompatActivity {
         // mic.setEnabled(false);
 
         if (!listening) {
+          // Update the icon background
+          runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+              mic.setBackgroundColor(Color.GREEN);
+            }
+          });
           capture = microphoneHelper.getInputStream(true);
           new Thread(new Runnable() {
             @Override
@@ -145,8 +155,16 @@ public class MainActivity extends AppCompatActivity {
               }
             }
           }).start();
+
           listening = true;
         } else {
+          // Update the icon background
+          runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+              mic.setBackgroundColor(Color.LTGRAY);
+            }
+          });
           microphoneHelper.closeInputStream();
           listening = false;
         }
@@ -212,6 +230,8 @@ public class MainActivity extends AppCompatActivity {
       public void run() {
         Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
         e.printStackTrace();
+        // Update the icon background
+        mic.setBackgroundColor(Color.LTGRAY);
       }
     });
   }
@@ -302,6 +322,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onError(Exception e) {
+      try {
+        capture.close(); // This is critical to avoid hangs (see https://github.com/watson-developer-cloud/android-sdk/issues/59)
+      } catch (IOException e1) {
+        e1.printStackTrace();
+      }
       showError(e);
       enableMicButton();
     }
