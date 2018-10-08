@@ -10,7 +10,6 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-
 package com.ibm.watson.developer_cloud.android.myapplication;
 
 import android.content.Intent;
@@ -36,34 +35,34 @@ import com.ibm.watson.developer_cloud.android.library.audio.StreamPlayer;
 import com.ibm.watson.developer_cloud.android.library.audio.utils.ContentType;
 import com.ibm.watson.developer_cloud.android.library.camera.CameraHelper;
 import com.ibm.watson.developer_cloud.android.library.camera.GalleryHelper;
-import com.ibm.watson.developer_cloud.language_translator.v2.LanguageTranslator;
-import com.ibm.watson.developer_cloud.language_translator.v2.model.Language;
+import com.ibm.watson.developer_cloud.language_translator.v3.LanguageTranslator;
+import com.ibm.watson.developer_cloud.language_translator.v3.model.TranslateOptions;
+import com.ibm.watson.developer_cloud.language_translator.v3.model.TranslationResult;
+import com.ibm.watson.developer_cloud.language_translator.v3.util.Language;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.SpeechToText;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.model.RecognizeOptions;
-import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechResults;
+import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechRecognitionResults;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.websocket.BaseRecognizeCallback;
 import com.ibm.watson.developer_cloud.text_to_speech.v1.TextToSpeech;
-import com.ibm.watson.developer_cloud.text_to_speech.v1.model.Voice;
+import com.ibm.watson.developer_cloud.text_to_speech.v1.model.SynthesizeOptions;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity {
   private final String TAG = "MainActivity";
 
-  private RadioGroup targetLanguage;
   private EditText input;
   private ImageButton mic;
   private Button translate;
   private ImageButton play;
   private TextView translatedText;
-  private Button gallery;
-  private Button camera;
   private ImageView loadedImage;
 
   private SpeechToText speechService;
   private TextToSpeech textService;
   private LanguageTranslator translationService;
-  private Language selectedTargetLanguage = Language.SPANISH;
+  private String selectedTargetLanguage = Language.SPANISH;
 
   private StreamPlayer player = new StreamPlayer();
 
@@ -92,15 +91,15 @@ public class MainActivity extends AppCompatActivity {
     textService = initTextToSpeechService();
     translationService = initLanguageTranslatorService();
 
-    targetLanguage = (RadioGroup) findViewById(R.id.target_language);
-    input = (EditText) findViewById(R.id.input);
-    mic = (ImageButton) findViewById(R.id.mic);
-    translate = (Button) findViewById(R.id.translate);
-    play = (ImageButton) findViewById(R.id.play);
-    translatedText = (TextView) findViewById(R.id.translated_text);
-    gallery = (Button) findViewById(R.id.gallery_button);
-    camera = (Button) findViewById(R.id.camera_button);
-    loadedImage = (ImageView) findViewById(R.id.loaded_image);
+    RadioGroup targetLanguage = findViewById(R.id.target_language);
+    input = findViewById(R.id.input);
+    mic = findViewById(R.id.mic);
+    translate = findViewById(R.id.translate);
+    play = findViewById(R.id.play);
+    translatedText = findViewById(R.id.translated_text);
+    Button gallery = findViewById(R.id.gallery_button);
+    Button camera = findViewById(R.id.camera_button);
+    loadedImage = findViewById(R.id.loaded_image);
 
     targetLanguage.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
       @Override
@@ -133,8 +132,6 @@ public class MainActivity extends AppCompatActivity {
     mic.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        // mic.setEnabled(false);
-
         if (!listening) {
           // Update the icon background
           runOnUiThread(new Runnable() {
@@ -148,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
               try {
-                speechService.recognizeUsingWebSocket(capture, getRecognizeOptions(),
+                speechService.recognizeUsingWebSocket(getRecognizeOptions(capture),
                     new MicrophoneRecognizeDelegate());
               } catch (Exception e) {
                 showError(e);
@@ -273,7 +270,7 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private LanguageTranslator initLanguageTranslatorService() {
-    LanguageTranslator service = new LanguageTranslator();
+    LanguageTranslator service = new LanguageTranslator("2018-05-01");
     String username = getString(R.string.language_translator_username);
     String password = getString(R.string.language_translator_password);
     service.setUsernameAndPassword(username, password);
@@ -281,16 +278,21 @@ public class MainActivity extends AppCompatActivity {
     return service;
   }
 
-  private RecognizeOptions getRecognizeOptions() {
-    return new RecognizeOptions.Builder().continuous(true).contentType(ContentType.OPUS.toString())
-        .model("en-US_BroadbandModel").interimResults(true).inactivityTimeout(2000).build();
+  private RecognizeOptions getRecognizeOptions(InputStream captureStream) {
+    return new RecognizeOptions.Builder()
+            .audio(captureStream)
+            .contentType(ContentType.OPUS.toString())
+            .model("en-US_BroadbandModel")
+            .interimResults(true)
+            .inactivityTimeout(2000)
+            .build();
   }
 
   private abstract class EmptyTextWatcher implements TextWatcher {
-    private boolean isEmpty = true; // assumes text is initially empty
-
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+    // assumes text is initially empty
+    private boolean isEmpty = true;
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -310,9 +312,8 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private class MicrophoneRecognizeDelegate extends BaseRecognizeCallback {
-
     @Override
-    public void onTranscription(SpeechResults speechResults) {
+    public void onTranscription(SpeechRecognitionResults speechResults) {
       System.out.println(speechResults);
       if (speechResults.getResults() != null && !speechResults.getResults().isEmpty()) {
         String text = speechResults.getResults().get(0).getAlternatives().get(0).getTranscript();
@@ -323,7 +324,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onError(Exception e) {
       try {
-        capture.close(); // This is critical to avoid hangs (see https://github.com/watson-developer-cloud/android-sdk/issues/59)
+        // This is critical to avoid hangs
+        // (see https://github.com/watson-developer-cloud/android-sdk/issues/59)
+        capture.close();
       } catch (IOException e1) {
         e1.printStackTrace();
       }
@@ -341,17 +344,27 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected String doInBackground(String... params) {
-      showTranslation(translationService.translate(params[0], Language.ENGLISH, selectedTargetLanguage).execute()
-          .getFirstTranslation());
+      TranslateOptions translateOptions = new TranslateOptions.Builder()
+              .addText(params[0])
+              .source(Language.ENGLISH)
+              .target(selectedTargetLanguage)
+              .build();
+      TranslationResult result = translationService.translate(translateOptions).execute();
+      String firstTranslation = result.getTranslations().get(0).getTranslationOutput();
+      showTranslation(firstTranslation);
       return "Did translate";
     }
   }
 
   private class SynthesisTask extends AsyncTask<String, Void, String> {
-
     @Override
     protected String doInBackground(String... params) {
-      player.playStream(textService.synthesize(params[0], Voice.EN_LISA).execute());
+      SynthesizeOptions synthesizeOptions = new SynthesizeOptions.Builder()
+              .text(params[0])
+              .voice(SynthesizeOptions.Voice.EN_US_LISAVOICE)
+              .accept(SynthesizeOptions.Accept.AUDIO_MP3)
+              .build();
+      player.playStream(textService.synthesize(synthesizeOptions).execute());
       return "Did synthesize";
     }
   }
