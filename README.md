@@ -40,20 +40,14 @@ The examples below assume that you already have service credentials. If not, you
 
 #### Getting the Credentials
 
-You will need the `username` and `password` (`api_key` for Visual Recognition) credentials, as well as the `url` for each service. Service credentials are different from your IBM Cloud account username and password.
-
-To get your service credentials, follow these steps:
-
- 1. Log in to IBM Cloud at [https://console.bluemix.net](https://console.bluemix.net).
-
- 1. Create an instance of the service:
-     1. In the IBM Cloud **Catalog**, select the service you want to use.
-     1. Under **Add Service**, type a unique name for the service instance in the Service name field. For example, type `my-service-name`. Leave the default values for the other options.
-     1. Click **Create**.
-
- 1. Copy your credentials:
-     1. On the left side of the page, click **Service Credentials** to view your service credentials.
-     1. Copy `username`, `password`(`api_key` for Visual Recognition), and `url`.
+1. Sign up for an [IBM Cloud account](https://console.bluemix.net/registration/).
+1. Create an instance of the Watson service you want to use and get your credentials:
+    - Go to the [IBM Cloud catalog](https://console.bluemix.net/catalog/?category=ai) page and select the service you want.
+    - Log in to your IBM Cloud account.
+    - Click **Create**.
+    - Click **Show** to view the service credentials.
+    - Copy the `apikey` value, or copy the `username` and `password` values if your service instance doesn't provide an `apikey`.
+    - Copy the `url` value.
 
 #### Adding the Credentials
 
@@ -62,18 +56,15 @@ The credentials should be added to the `example/res/values/credentials.xml` file
 ```xml
 <resources>
   <!-- Paste Language Translator information here -->
-  <string name="language_translator_username"></string>
-  <string name="language_translator_password"></string>
-  <string name="language_translator_url"></string>
+  <string name="visual_recognition_iam_apikey"></string>
+  <string name="visual_recognition_url"></string>
 
   <!-- Paste Speech to Text information here -->
-  <string name="speech_text_username"></string>
-  <string name="speech_text_password"></string>
+  <string name="speech_text_iam_apikey"></string>
   <string name="speech_text_url"></string>
 
   <!-- Paste Text to Speech information here -->
-  <string name="text_speech_username"></string>
-  <string name="text_speech_password"></string>
+  <string name="text_speech_iam_apikey"></string>
   <string name="text_speech_url"></string>
 </resources>
 ```
