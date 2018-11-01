@@ -362,7 +362,7 @@ public class MainActivity extends AppCompatActivity {
       SynthesizeOptions synthesizeOptions = new SynthesizeOptions.Builder()
               .text(params[0])
               .voice(SynthesizeOptions.Voice.EN_US_LISAVOICE)
-              .accept(SynthesizeOptions.Accept.AUDIO_MP3)
+              .accept(SynthesizeOptions.Accept.AUDIO_WAV)
               .build();
       player.playStream(textService.synthesize(synthesizeOptions).execute());
       return "Did synthesize";
@@ -377,7 +377,9 @@ public class MainActivity extends AppCompatActivity {
    * @param grantResults the grant results
    */
   @Override
-  public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+  public void onRequestPermissionsResult(int requestCode,
+                                         String[] permissions,
+                                         int[] grantResults) {
     switch (requestCode) {
       case CameraHelper.REQUEST_PERMISSION: {
         // permission granted
