@@ -26,6 +26,9 @@ import java.io.InputStream;
  */
 public final class StreamPlayer {
   private final String TAG = "StreamPlayer";
+  // default sample rate for .wav from Watson TTS
+  // see https://console.bluemix.net/docs/services/text-to-speech/http.html#format
+  private final int DEFAULT_SAMPLE_RATE = 22050;
 
   private AudioTrack audioTrack;
 
@@ -41,9 +44,9 @@ public final class StreamPlayer {
   }
 
   /**
-   * Play the given InputStream. The stream must have been converted from a WAV type audio source.
+   * Play the given InputStream. The stream must be a PCM audio format with a sample rate of 22050.
    *
-   * @param stream the stream derived from a WAV audio source
+   * @param stream the stream derived from a PCM audio source
    */
   public void playStream(InputStream stream) {
     try {
@@ -53,7 +56,32 @@ public final class StreamPlayer {
       int rawLength = data.length - destPos;
       byte[] d = new byte[rawLength];
       System.arraycopy(data, destPos, d, 0, rawLength);
-      initPlayer();
+      initPlayer(DEFAULT_SAMPLE_RATE);
+      audioTrack.write(d, 0, d.length);
+      stream.close();
+      if (audioTrack != null && audioTrack.getState() != AudioTrack.STATE_UNINITIALIZED) {
+        audioTrack.release();
+      }
+    } catch (IOException e2) {
+      Log.e(TAG, e2.getMessage());
+    }
+  }
+
+  /**
+   * Play the given InputStream. The stream must be a PCM audio format.
+   *
+   * @param stream the stream derived from a PCM audio source
+   * @param sampleRate the sample rate for the provided stream
+   */
+  public void playStream(InputStream stream, int sampleRate) {
+    try {
+      byte[] data = convertStreamToByteArray(stream);
+      int headSize = 44, metaDataSize = 48;
+      int destPos = headSize + metaDataSize;
+      int rawLength = data.length - destPos;
+      byte[] d = new byte[rawLength];
+      System.arraycopy(data, destPos, d, 0, rawLength);
+      initPlayer(sampleRate);
       audioTrack.write(d, 0, d.length);
       stream.close();
       if (audioTrack != null && audioTrack.getState() != AudioTrack.STATE_UNINITIALIZED) {
@@ -80,15 +108,13 @@ public final class StreamPlayer {
 
   /**
    * Initialize AudioTrack by getting buffersize
+   *
+   * @param sampleRate the sample rate for the audio to be played
    */
-  private void initPlayer() {
+  private void initPlayer(int sampleRate) {
     synchronized (this) {
-      // default sample rate for .wav from Watson TTS
-      // see https://console.bluemix.net/docs/services/text-to-speech/http.html#format
-      final int DEFAULT_SAMPLE_RATE = 22050;
-
       int bufferSize = AudioTrack.getMinBufferSize(
-              DEFAULT_SAMPLE_RATE,
+              sampleRate,
               AudioFormat.CHANNEL_OUT_MONO,
               AudioFormat.ENCODING_PCM_16BIT);
       if (bufferSize == AudioTrack.ERROR_BAD_VALUE) {
@@ -97,7 +123,7 @@ public final class StreamPlayer {
 
       audioTrack = new AudioTrack(
               AudioManager.STREAM_MUSIC,
-              DEFAULT_SAMPLE_RATE,
+              sampleRate,
               AudioFormat.CHANNEL_OUT_MONO,
               AudioFormat.ENCODING_PCM_16BIT,
               bufferSize,
