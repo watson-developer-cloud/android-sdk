@@ -123,7 +123,7 @@ Be sure to take a look at the example app to get a working example of putting th
 
 ### StreamPlayer
 
-Provides the ability to directly play an `InputStream`. **Note:** The `InputStream` must come from a WAV format audio source.
+Provides the ability to directly play an `InputStream`. **Note:** The `InputStream` must come from a PCM audio source. Examples include WAV files or Audio/L16.
 
 ```java
 StreamPlayer player = new StreamPlayer();
@@ -141,6 +141,19 @@ InputStream streamResult = textService.synthesize(synthesizeOptions).execute();
 
 StreamPlayer player = new StreamPlayer();
 player.playStream(streamResult); // should work like a charm
+```
+
+Another content type that works from the Text to Speech APIs is the Audio/L16 type. For this you need to specify the sample rate, and you can do so with the alternate version of the `playStream()` method. The default sample rate on the single-argument version is 22050.
+
+```java
+SynthesizeOptions synthesizeOptions = new SynthesizeOptions.Builder()
+  .text("I love making Android apps")
+  .accept("audio/l16;rate=8000") // specifying our content type and sample rate
+  .build();
+InputStream streamResult = textService.synthesize(synthesizeOptions).execute();
+
+StreamPlayer player = new StreamPlayer();
+player.playStream(streamResult, 8000); // passing in the sample rate
 ```
 
 ### CameraHelper
