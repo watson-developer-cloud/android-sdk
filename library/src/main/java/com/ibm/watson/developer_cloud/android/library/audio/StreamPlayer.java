@@ -28,7 +28,6 @@ public final class StreamPlayer {
   private final String TAG = "StreamPlayer";
 
   private AudioTrack audioTrack;
-  private int sampleRate;
 
   private static byte[] convertStreamToByteArray(InputStream is) throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -41,22 +40,14 @@ public final class StreamPlayer {
     return baos.toByteArray();
   }
 
-  private static int readInt(final byte[] data, final int offset) {
-    return (data[offset] & 0xff) | ((data[offset + 1] & 0xff) << 8) | ((data[offset + 2] & 0xff) << 16)
-            | (data[offset + 3] << 24); // no 0xff on the last one to keep the sign
-  }
-
   /**
-   * Play the given InputStream.
+   * Play the given InputStream. The stream must have been converted from a WAV type audio source.
    *
-   * @param stream the stream
+   * @param stream the stream derived from a WAV audio source
    */
   public void playStream(InputStream stream) {
     try {
       byte[] data = convertStreamToByteArray(stream);
-      if (data.length > 28) {
-        sampleRate = readInt(data, 24);
-      }
       int headSize = 44, metaDataSize = 48;
       int destPos = headSize + metaDataSize;
       int rawLength = data.length - destPos;
@@ -78,7 +69,8 @@ public final class StreamPlayer {
    */
   public void interrupt() {
     if (audioTrack != null) {
-      if (audioTrack.getState() == AudioTrack.STATE_INITIALIZED || audioTrack.getState() == AudioTrack.PLAYSTATE_PLAYING) {
+      if (audioTrack.getState() == AudioTrack.STATE_INITIALIZED
+              || audioTrack.getState() == AudioTrack.PLAYSTATE_PLAYING) {
         audioTrack.pause();
       }
       audioTrack.flush();
@@ -91,11 +83,27 @@ public final class StreamPlayer {
    */
   private void initPlayer() {
     synchronized (this) {
-      int bs = AudioTrack.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
-      audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, sampleRate, AudioFormat.CHANNEL_OUT_MONO,
-              AudioFormat.ENCODING_PCM_16BIT, bs, AudioTrack.MODE_STREAM);
-      if (audioTrack != null)
-        audioTrack.play();
+      // default sample rate for .wav from Watson TTS
+      // see https://console.bluemix.net/docs/services/text-to-speech/http.html#format
+      final int DEFAULT_SAMPLE_RATE = 22050;
+
+      int bufferSize = AudioTrack.getMinBufferSize(
+              DEFAULT_SAMPLE_RATE,
+              AudioFormat.CHANNEL_OUT_MONO,
+              AudioFormat.ENCODING_PCM_16BIT);
+      if (bufferSize == AudioTrack.ERROR_BAD_VALUE) {
+        throw new RuntimeException("Could not determine buffer size for audio");
+      }
+
+      audioTrack = new AudioTrack(
+              AudioManager.STREAM_MUSIC,
+              DEFAULT_SAMPLE_RATE,
+              AudioFormat.CHANNEL_OUT_MONO,
+              AudioFormat.ENCODING_PCM_16BIT,
+              bufferSize,
+              AudioTrack.MODE_STREAM
+      );
+      audioTrack.play();
     }
   }
 }
