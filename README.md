@@ -40,24 +40,11 @@ The examples below assume that you already have service credentials. If not, you
 
 #### Getting the Credentials
 
-You will need the `username` and `password` (`api_key` for Visual Recognition) credentials, as well as the `url` for each service. Service credentials are different from your IBM Cloud account username and password.
-
-To get your service credentials, follow these steps:
-
- 1. Log in to IBM Cloud at [https://console.bluemix.net](https://console.bluemix.net).
-
- 1. Create an instance of the service:
-     1. In the IBM Cloud **Catalog**, select the service you want to use.
-     1. Under **Add Service**, type a unique name for the service instance in the Service name field. For example, type `my-service-name`. Leave the default values for the other options.
-     1. Click **Create**.
-
- 1. Copy your credentials:
-     1. On the left side of the page, click **Service Credentials** to view your service credentials.
-     1. Copy `username`, `password`(`api_key` for Visual Recognition), and `url`.
+Since the Android SDK is designed to work with the [Watson Java SDK][java-sdk], getting service credentials works in the same way. You can follow the same instructions for getting those credentials [here](https://github.com/watson-developer-cloud/java-sdk#authentication).
 
 #### Adding the Credentials
 
-The credentials should be added to the `example/res/values/credentials.xml` file shown below.
+Once you've followed the instructions above to get credentials, they should be added to the `example/res/values/credentials.xml` file shown below.
 
 ```xml
 <resources>
@@ -89,9 +76,9 @@ You can also check out the [wiki][wiki] for some additional information.
 
 ## Examples
 
-This SDK is built for use with the [java-sdk][java-sdk].
+This SDK is built for use with the [Watson Java SDK][java-sdk].
 
-The examples below are specific for Android as they use the Microphone and Speaker; for actual services refer to the [java-sdk][java-sdk]. Be sure to use the provided example app as a model for your own Android app using Watson services.
+The examples below are specific for Android as they use the Microphone and Speaker; for actual services refer to the [Java SDK][java-sdk]. You can use the provided example app as a model for your own Android app using Watson services.
 
 ### MicrophoneHelper
 
@@ -136,11 +123,24 @@ Be sure to take a look at the example app to get a working example of putting th
 
 ### StreamPlayer
 
-Provides the ability to directly play an InputStream
+Provides the ability to directly play an `InputStream`. **Note:** The `InputStream` must come from a WAV format audio source.
 
 ```java
 StreamPlayer player = new StreamPlayer();
 player.playStream(yourInputStream);
+```
+
+Since this SDK is intended to be used with the Watson APIs, a typical use case for the `StreamPlayer` class is for playing the output of a Watson Text to Speech call. In that case, you can specify the type of audio file you'd like to receive from the service to ensure it will be output properly by your Android device.
+
+```java
+SynthesizeOptions synthesizeOptions = new SynthesizeOptions.Builder()
+  .text("I love making Android apps")
+  .accept(SynthesizeOptions.Accept.AUDIO_WAV) // specifying that we want a WAV file
+  .build();
+InputStream streamResult = textService.synthesize(synthesizeOptions).execute();
+
+StreamPlayer player = new StreamPlayer();
+player.playStream(streamResult); // should work like a charm
 ```
 
 ### CameraHelper
