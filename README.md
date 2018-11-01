@@ -39,8 +39,14 @@ The examples below assume that you already have service credentials. If not, you
 ## Service Credentials
 
 #### Getting the Credentials
-
-Since the Android SDK is designed to work with the [Watson Java SDK][java-sdk], getting service credentials works in the same way. You can follow the same instructions for getting those credentials [here](https://github.com/watson-developer-cloud/java-sdk#authentication).
+1. Sign up for an [IBM Cloud account](https://console.bluemix.net/registration/).
+1. Create an instance of the Watson service you want to use and get your credentials:
+    - Go to the [IBM Cloud catalog](https://console.bluemix.net/catalog/?category=ai) page and select the service you want.
+    - Log in to your IBM Cloud account.
+    - Click **Create**.
+    - Click **Show** to view the service credentials.
+    - Copy the `apikey` value, or copy the `username` and `password` values if your service instance doesn't provide an `apikey`.
+    - Copy the `url` value.
 
 #### Adding the Credentials
 
@@ -49,18 +55,15 @@ Once you've followed the instructions above to get credentials, they should be a
 ```xml
 <resources>
   <!-- Paste Language Translator information here -->
-  <string name="language_translator_username"></string>
-  <string name="language_translator_password"></string>
-  <string name="language_translator_url"></string>
+  <string name="visual_recognition_iam_apikey"></string>
+  <string name="visual_recognition_url"></string>
 
   <!-- Paste Speech to Text information here -->
-  <string name="speech_text_username"></string>
-  <string name="speech_text_password"></string>
+  <string name="speech_text_iam_apikey"></string>
   <string name="speech_text_url"></string>
 
   <!-- Paste Text to Speech information here -->
-  <string name="text_speech_username"></string>
-  <string name="text_speech_password"></string>
+  <string name="text_speech_iam_apikey"></string>
   <string name="text_speech_url"></string>
 </resources>
 ```
