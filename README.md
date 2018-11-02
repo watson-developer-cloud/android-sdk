@@ -39,7 +39,6 @@ The examples below assume that you already have service credentials. If not, you
 ## Service Credentials
 
 #### Getting the Credentials
-
 1. Sign up for an [IBM Cloud account](https://console.bluemix.net/registration/).
 1. Create an instance of the Watson service you want to use and get your credentials:
     - Go to the [IBM Cloud catalog](https://console.bluemix.net/catalog/?category=ai) page and select the service you want.
@@ -51,7 +50,7 @@ The examples below assume that you already have service credentials. If not, you
 
 #### Adding the Credentials
 
-The credentials should be added to the `example/res/values/credentials.xml` file shown below.
+Once you've followed the instructions above to get credentials, they should be added to the `example/res/values/credentials.xml` file shown below.
 
 ```xml
 <resources>
@@ -80,9 +79,9 @@ You can also check out the [wiki][wiki] for some additional information.
 
 ## Examples
 
-This SDK is built for use with the [java-sdk][java-sdk].
+This SDK is built for use with the [Watson Java SDK][java-sdk].
 
-The examples below are specific for Android as they use the Microphone and Speaker; for actual services refer to the [java-sdk][java-sdk]. Be sure to use the provided example app as a model for your own Android app using Watson services.
+The examples below are specific for Android as they use the Microphone and Speaker; for actual services refer to the [Java SDK][java-sdk]. You can use the provided example app as a model for your own Android app using Watson services.
 
 ### MicrophoneHelper
 
@@ -127,11 +126,37 @@ Be sure to take a look at the example app to get a working example of putting th
 
 ### StreamPlayer
 
-Provides the ability to directly play an InputStream
+Provides the ability to directly play an `InputStream`. **Note:** The `InputStream` must come from a PCM audio source. Examples include WAV files or Audio/L16.
 
 ```java
 StreamPlayer player = new StreamPlayer();
 player.playStream(yourInputStream);
+```
+
+Since this SDK is intended to be used with the Watson APIs, a typical use case for the `StreamPlayer` class is for playing the output of a Watson Text to Speech call. In that case, you can specify the type of audio file you'd like to receive from the service to ensure it will be output properly by your Android device.
+
+```java
+SynthesizeOptions synthesizeOptions = new SynthesizeOptions.Builder()
+  .text("I love making Android apps")
+  .accept(SynthesizeOptions.Accept.AUDIO_WAV) // specifying that we want a WAV file
+  .build();
+InputStream streamResult = textService.synthesize(synthesizeOptions).execute();
+
+StreamPlayer player = new StreamPlayer();
+player.playStream(streamResult); // should work like a charm
+```
+
+Another content type that works from the Text to Speech APIs is the Audio/L16 type. For this you need to specify the sample rate, and you can do so with the alternate version of the `playStream()` method. The default sample rate on the single-argument version is 22050.
+
+```java
+SynthesizeOptions synthesizeOptions = new SynthesizeOptions.Builder()
+  .text("I love making Android apps")
+  .accept("audio/l16;rate=8000") // specifying our content type and sample rate
+  .build();
+InputStream streamResult = textService.synthesize(synthesizeOptions).execute();
+
+StreamPlayer player = new StreamPlayer();
+player.playStream(streamResult, 8000); // passing in the sample rate
 ```
 
 ### CameraHelper

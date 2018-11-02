@@ -43,6 +43,6 @@ dependencies {
   }
   compile 'com.android.support:appcompat-v7:26.0.0'
   compile 'com.android.support:multidex:1.0.1'
-  compile 'com.ibm.watson.developer_cloud:java-sdk:3.9.1'
+  compile 'com.ibm.watson.developer_cloud:java-sdk:6.9.0'
   compile project(':library')
 }
