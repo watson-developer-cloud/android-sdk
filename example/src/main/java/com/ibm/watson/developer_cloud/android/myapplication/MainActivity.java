@@ -39,6 +39,7 @@ import com.ibm.watson.developer_cloud.language_translator.v3.LanguageTranslator;
 import com.ibm.watson.developer_cloud.language_translator.v3.model.TranslateOptions;
 import com.ibm.watson.developer_cloud.language_translator.v3.model.TranslationResult;
 import com.ibm.watson.developer_cloud.language_translator.v3.util.Language;
+import com.ibm.watson.developer_cloud.service.security.IamOptions;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.SpeechToText;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.model.RecognizeOptions;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechRecognitionResults;
@@ -252,28 +253,28 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private SpeechToText initSpeechToTextService() {
-    SpeechToText service = new SpeechToText();
-    String username = getString(R.string.speech_text_username);
-    String password = getString(R.string.speech_text_password);
-    service.setUsernameAndPassword(username, password);
+    IamOptions options = new IamOptions.Builder()
+            .apiKey(getString(R.string.speech_text_apikey))
+            .build();
+    SpeechToText service = new SpeechToText(options);
     service.setEndPoint(getString(R.string.speech_text_url));
     return service;
   }
 
   private TextToSpeech initTextToSpeechService() {
-    TextToSpeech service = new TextToSpeech();
-    String username = getString(R.string.text_speech_username);
-    String password = getString(R.string.text_speech_password);
-    service.setUsernameAndPassword(username, password);
+    IamOptions options = new IamOptions.Builder()
+            .apiKey(getString(R.string.text_speech_apikey))
+            .build();
+    TextToSpeech service = new TextToSpeech(options);
     service.setEndPoint(getString(R.string.text_speech_url));
     return service;
   }
 
   private LanguageTranslator initLanguageTranslatorService() {
-    LanguageTranslator service = new LanguageTranslator("2018-05-01");
-    String username = getString(R.string.language_translator_username);
-    String password = getString(R.string.language_translator_password);
-    service.setUsernameAndPassword(username, password);
+    IamOptions options = new IamOptions.Builder()
+            .apiKey(getString(R.string.language_translator_apikey))
+            .build();
+    LanguageTranslator service = new LanguageTranslator("2018-05-01", options);
     service.setEndPoint(getString(R.string.language_translator_url));
     return service;
   }
