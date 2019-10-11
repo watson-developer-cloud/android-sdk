@@ -34,7 +34,6 @@ script:
 - ./gradlew generateJavadocsJar
 - ./gradlew generateSourcesJar
 - ./gradlew generatePomFileForAarPublication
-- ./gradlew build jacocoTestReport
 - ./gradlew generateReleaseJavadoc
 - echo no | android create avd --force -n test -t $API --abi $ABI
 - emulator -avd test -no-skin -no-audio -no-window &

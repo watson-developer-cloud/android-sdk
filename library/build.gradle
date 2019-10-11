@@ -4,9 +4,10 @@ apply plugin: 'maven-publish'
 buildscript {
   repositories {
     mavenCentral()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
   }
   dependencies {
-    classpath 'com.vanniktech:gradle-android-javadoc-plugin:0.3.0'
+    classpath 'com.vanniktech:gradle-android-javadoc-plugin:0.4.0-SNAPSHOT'
   }
 }
 
@@ -57,7 +58,7 @@ publishing {
 
       pom.withXml {
         def dependencies = asNode().appendNode('dependencies')
-        configurations.getByName("_releaseCompile").getResolvedConfiguration().getFirstLevelModuleDependencies().each {
+        configurations.getByName("releaseCompileClasspath").getResolvedConfiguration().getFirstLevelModuleDependencies().each {
           def dependency = dependencies.appendNode('dependency')
           dependency.appendNode('groupId', it.moduleGroup)
           dependency.appendNode('artifactId', it.moduleName)
