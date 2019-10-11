@@ -3,12 +3,13 @@ language: android
 android:
   components:
   - tools
-  - build-tools-26.0.1
+  - build-tools-28.0.3
   - android-19
   - android-21
   - android-22
   - android-23
   - android-26
+  - android-28
   - extra-android-m2repository
   - sys-img-armeabi-v7a-android-19
   - sys-img-armeabi-v7a-android-21
