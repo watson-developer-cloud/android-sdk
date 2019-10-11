@@ -2,8 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'jacoco-android'
 
 android {
-  compileSdkVersion 26
-  buildToolsVersion '26.0.1'
+  compileSdkVersion 28
 
   configurations.all {
     resolutionStrategy.force 'com.android.support:support-annotations:23.0.1'
@@ -13,7 +12,7 @@ android {
     applicationId "com.ibm.watson.developer_cloud.android.myapplication"
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     minSdkVersion 19
-    targetSdkVersion 26
+    targetSdkVersion 28
     versionCode 1
     versionName "1.0"
 
@@ -33,16 +32,18 @@ android {
 }
 
 dependencies {
-  compile fileTree(dir: 'libs', include: ['*.jar'])
-  testCompile 'junit:junit:4.12'
-  androidTestCompile 'com.android.support.test:runner:0.5'
-  androidTestCompile 'com.android.support.test:rules:0.5'
-  androidTestCompile 'com.android.support.test.espresso:espresso-intents:2.2.2'
-  androidTestCompile ('com.android.support.test.espresso:espresso-core:2.2.2') {
+  implementation fileTree(dir: 'libs', include: ['*.jar'])
+  testImplementation 'junit:junit:4.12'
+  androidTestImplementation 'com.android.support.test:runner:1.0.2'
+  androidTestImplementation 'com.android.support.test:rules:1.0.2'
+  androidTestImplementation 'com.android.support.test.espresso:espresso-intents:3.0.2'
+  androidTestImplementation ('com.android.support.test.espresso:espresso-core:2.2.2') {
     exclude group: 'com.android.support', module: 'support-annotations'
   }
-  compile 'com.android.support:appcompat-v7:26.0.0'
-  compile 'com.android.support:multidex:1.0.1'
-  compile 'com.ibm.watson.developer_cloud:java-sdk:6.9.2'
-  compile project(':library')
+  implementation 'com.android.support:appcompat-v7:28.0.0'
+  implementation 'com.android.support:multidex:1.0.3'
+  implementation ('com.ibm.watson:ibm-watson:8.0.0') {
+    exclude group: 'com.google.code.findbugs', module: 'annotations'
+  }
+  implementation project(':library')
 }
