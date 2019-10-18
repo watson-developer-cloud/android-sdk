@@ -6,8 +6,8 @@
       android:label="@string/app_name">
 
     <provider
-        android:name="android.support.v4.content.FileProvider"
-        android:authorities="com.ibm.watson.developer_cloud.android.provider"
+        android:name=".util.WatsonFileProvider"
+        android:authorities="${applicationId}.com.ibm.watson.developer_cloud.android.provider"
         android:exported="false"
         android:grantUriPermissions="true">
       <meta-data
