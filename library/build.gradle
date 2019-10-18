@@ -4,21 +4,21 @@ apply plugin: 'maven-publish'
 buildscript {
   repositories {
     mavenCentral()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
   }
   dependencies {
-    classpath 'com.vanniktech:gradle-android-javadoc-plugin:0.2.1'
+    classpath 'com.vanniktech:gradle-android-javadoc-plugin:0.4.0-SNAPSHOT'
   }
 }
 
 apply plugin: 'com.vanniktech.android.javadoc'
 
 android {
-  compileSdkVersion 26
-  buildToolsVersion '26.0.1'
+  compileSdkVersion 28
 
   defaultConfig {
     minSdkVersion 19
-    targetSdkVersion 26
+    targetSdkVersion 28
     versionCode 1
     versionName "1.0"
 
@@ -40,10 +40,10 @@ android {
 }
 
 dependencies {
-  compile fileTree(dir: 'libs', include: ['*.jar'])
-  testCompile 'junit:junit:4.12'
-  compile 'com.android.support:appcompat-v7:26.0.0'
-  compile ('net.java.dev.jna:jna:4.2.2') {
+  implementation fileTree(dir: 'libs', include: ['*.jar'])
+  testImplementation 'junit:junit:4.12'
+  implementation 'com.android.support:appcompat-v7:28.0.0'
+  implementation ('net.java.dev.jna:jna:4.2.2') {
     transitive=true
   }
 }
@@ -58,7 +58,7 @@ publishing {
 
       pom.withXml {
         def dependencies = asNode().appendNode('dependencies')
-        configurations.getByName("_releaseCompile").getResolvedConfiguration().getFirstLevelModuleDependencies().each {
+        configurations.getByName("releaseCompileClasspath").getResolvedConfiguration().getFirstLevelModuleDependencies().each {
           def dependency = dependencies.appendNode('dependency')
           dependency.appendNode('groupId', it.moduleGroup)
           dependency.appendNode('artifactId', it.moduleName)
