@@ -29,23 +29,26 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ibm.cloud.sdk.core.http.HttpMediaType;
+import com.ibm.cloud.sdk.core.security.Authenticator;
+import com.ibm.cloud.sdk.core.security.IamAuthenticator;
 import com.ibm.watson.developer_cloud.android.library.audio.MicrophoneHelper;
 import com.ibm.watson.developer_cloud.android.library.audio.MicrophoneInputStream;
 import com.ibm.watson.developer_cloud.android.library.audio.StreamPlayer;
 import com.ibm.watson.developer_cloud.android.library.audio.utils.ContentType;
 import com.ibm.watson.developer_cloud.android.library.camera.CameraHelper;
 import com.ibm.watson.developer_cloud.android.library.camera.GalleryHelper;
-import com.ibm.watson.developer_cloud.language_translator.v3.LanguageTranslator;
-import com.ibm.watson.developer_cloud.language_translator.v3.model.TranslateOptions;
-import com.ibm.watson.developer_cloud.language_translator.v3.model.TranslationResult;
-import com.ibm.watson.developer_cloud.language_translator.v3.util.Language;
-import com.ibm.watson.developer_cloud.service.security.IamOptions;
-import com.ibm.watson.developer_cloud.speech_to_text.v1.SpeechToText;
-import com.ibm.watson.developer_cloud.speech_to_text.v1.model.RecognizeOptions;
-import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechRecognitionResults;
-import com.ibm.watson.developer_cloud.speech_to_text.v1.websocket.BaseRecognizeCallback;
-import com.ibm.watson.developer_cloud.text_to_speech.v1.TextToSpeech;
-import com.ibm.watson.developer_cloud.text_to_speech.v1.model.SynthesizeOptions;
+import com.ibm.watson.language_translator.v3.LanguageTranslator;
+import com.ibm.watson.language_translator.v3.model.TranslateOptions;
+import com.ibm.watson.language_translator.v3.model.TranslationResult;
+import com.ibm.watson.language_translator.v3.util.Language;
+import com.ibm.watson.speech_to_text.v1.SpeechToText;
+import com.ibm.watson.speech_to_text.v1.model.RecognizeOptions;
+import com.ibm.watson.speech_to_text.v1.model.SpeechRecognitionResults;
+import com.ibm.watson.speech_to_text.v1.websocket.BaseRecognizeCallback;
+import com.ibm.watson.speech_to_text.v1.websocket.RecognizeCallback;
+import com.ibm.watson.text_to_speech.v1.TextToSpeech;
+import com.ibm.watson.text_to_speech.v1.model.SynthesizeOptions;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -147,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
               try {
                 speechService.recognizeUsingWebSocket(getRecognizeOptions(capture),
-                    new MicrophoneRecognizeDelegate());
+                        new MicrophoneRecognizeDelegate());
               } catch (Exception e) {
                 showError(e);
               }
@@ -253,29 +256,24 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private SpeechToText initSpeechToTextService() {
-    IamOptions options = new IamOptions.Builder()
-            .apiKey(getString(R.string.speech_text_apikey))
-            .build();
-    SpeechToText service = new SpeechToText(options);
-    service.setEndPoint(getString(R.string.speech_text_url));
+    Authenticator authenticator = new IamAuthenticator(getString(R.string.speech_text_apikey));
+    SpeechToText service = new SpeechToText(authenticator);
+    service.setServiceUrl(getString(R.string.speech_text_url));
     return service;
   }
 
   private TextToSpeech initTextToSpeechService() {
-    IamOptions options = new IamOptions.Builder()
-            .apiKey(getString(R.string.text_speech_apikey))
-            .build();
-    TextToSpeech service = new TextToSpeech(options);
-    service.setEndPoint(getString(R.string.text_speech_url));
+    Authenticator authenticator = new IamAuthenticator(getString(R.string.text_speech_apikey));
+    TextToSpeech service = new TextToSpeech(authenticator);
+    service.setServiceUrl(getString(R.string.text_speech_url));
     return service;
   }
 
   private LanguageTranslator initLanguageTranslatorService() {
-    IamOptions options = new IamOptions.Builder()
-            .apiKey(getString(R.string.language_translator_apikey))
-            .build();
-    LanguageTranslator service = new LanguageTranslator("2018-05-01", options);
-    service.setEndPoint(getString(R.string.language_translator_url));
+    Authenticator authenticator
+            = new IamAuthenticator(getString(R.string.language_translator_apikey));
+    LanguageTranslator service = new LanguageTranslator("2018-05-01", authenticator);
+    service.setServiceUrl(getString(R.string.language_translator_url));
     return service;
   }
 
@@ -312,7 +310,7 @@ public class MainActivity extends AppCompatActivity {
     public abstract void onEmpty(boolean empty);
   }
 
-  private class MicrophoneRecognizeDelegate extends BaseRecognizeCallback {
+  private class MicrophoneRecognizeDelegate extends BaseRecognizeCallback implements RecognizeCallback {
     @Override
     public void onTranscription(SpeechRecognitionResults speechResults) {
       System.out.println(speechResults);
@@ -350,8 +348,9 @@ public class MainActivity extends AppCompatActivity {
               .source(Language.ENGLISH)
               .target(selectedTargetLanguage)
               .build();
-      TranslationResult result = translationService.translate(translateOptions).execute();
-      String firstTranslation = result.getTranslations().get(0).getTranslationOutput();
+      TranslationResult result
+              = translationService.translate(translateOptions).execute().getResult();
+      String firstTranslation = result.getTranslations().get(0).getTranslation();
       showTranslation(firstTranslation);
       return "Did translate";
     }
@@ -363,9 +362,9 @@ public class MainActivity extends AppCompatActivity {
       SynthesizeOptions synthesizeOptions = new SynthesizeOptions.Builder()
               .text(params[0])
               .voice(SynthesizeOptions.Voice.EN_US_LISAVOICE)
-              .accept(SynthesizeOptions.Accept.AUDIO_WAV)
+              .accept(HttpMediaType.AUDIO_WAV)
               .build();
-      player.playStream(textService.synthesize(synthesizeOptions).execute());
+      player.playStream(textService.synthesize(synthesizeOptions).execute().getResult());
       return "Did synthesize";
     }
   }
