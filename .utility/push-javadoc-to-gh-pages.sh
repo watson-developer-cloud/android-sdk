@@ -10,7 +10,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" ]; then
     # on tagged builds, $TRAVIS_BRANCH is the tag (e.g. v1.2.3), otherwise it's the branch name (e.g. master)
     rm -rf docs/$TRAVIS_BRANCH
     mkdir -p docs/$TRAVIS_BRANCH
-    cp -rf ../library/javaDoc/release/* docs/$TRAVIS_BRANCH
+    cp -rf ../library/build/docs/javadoc/* docs/$TRAVIS_BRANCH
     ../.utility/generate_index_html.sh > index.html
 
 	# update the latest/ symlink
