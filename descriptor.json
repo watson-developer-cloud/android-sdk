@@ -9,24 +9,24 @@
   },
 
   "version": {
-    "name": "0.5.1"
+    "name": "0.5.2"
   },
 
   "files": [
     {
-      "uploadPattern": "com/ibm/watson/developer_cloud/android-sdk/0.5.1/android-sdk-0.5.1-javadoc.jar",
+      "uploadPattern": "com/ibm/watson/developer_cloud/android-sdk/0.5.2/android-sdk-0.5.2-javadoc.jar",
       "includePattern": "library/build/libs/library-javadoc.jar"
     },
     {
-      "uploadPattern": "com/ibm/watson/developer_cloud/android-sdk/0.5.1/android-sdk-0.5.1-sources.jar",
+      "uploadPattern": "com/ibm/watson/developer_cloud/android-sdk/0.5.2/android-sdk-0.5.2-sources.jar",
       "includePattern": "library/build/libs/library-sources.jar"
     },
     {
-      "uploadPattern": "com/ibm/watson/developer_cloud/android-sdk/0.5.1/android-sdk-0.5.1.aar",
+      "uploadPattern": "com/ibm/watson/developer_cloud/android-sdk/0.5.2/android-sdk-0.5.2.aar",
       "includePattern": "library/build/outputs/aar/library-release.aar"
     },
     {
-      "uploadPattern": "com/ibm/watson/developer_cloud/android-sdk/0.5.1/android-sdk-0.5.1.pom",
+      "uploadPattern": "com/ibm/watson/developer_cloud/android-sdk/0.5.2/android-sdk-0.5.2.pom",
       "includePattern": "library/build/android-sdk.pom"
     }
   ],
