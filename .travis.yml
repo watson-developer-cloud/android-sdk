@@ -56,6 +56,13 @@ deploy:
     tags: true
     repo: watson-developer-cloud/android-sdk
     condition: "$API = android-19"
+- provider: script
+  script: ".utility/push-javadoc-to-gh-pages.sh"
+  skip_cleanup: true
+  on:
+    branch: master
+    repo: watson-developer-cloud/android-sdk
+    condition: "$API = android-19"
 - provider: bintray
   file: $TRAVIS_BUILD_DIR/descriptor.json
   user: milbuild
