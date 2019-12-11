@@ -35,6 +35,7 @@ script:
 - ./gradlew generateSourcesJar
 - ./gradlew generatePomFileForAarPublication
 - ./gradlew generateReleaseJavadoc
+- ./gradlew library:assemble
 - echo no | android create avd --force -n test -t $API --abi $ABI
 - emulator -avd test -no-skin -no-audio -no-window &
 - android-wait-for-emulator
