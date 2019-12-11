@@ -106,9 +106,9 @@ public final class MicrophoneInputStream extends InputStream implements AudioCon
    */
   @Override
   public void close() throws IOException {
+    captureThread.end();
     os.close();
     is.close();
-    captureThread.end();
   }
 
   /**

@@ -35,6 +35,7 @@ script:
 - ./gradlew generateSourcesJar
 - ./gradlew generatePomFileForAarPublication
 - ./gradlew generateReleaseJavadoc
+- ./gradlew library:assemble
 - echo no | android create avd --force -n test -t $API --abi $ABI
 - emulator -avd test -no-skin -no-audio -no-window &
 - android-wait-for-emulator
@@ -53,6 +54,13 @@ deploy:
   skip_cleanup: true
   on:
     tags: true
+    repo: watson-developer-cloud/android-sdk
+    condition: "$API = android-19"
+- provider: script
+  script: ".utility/push-javadoc-to-gh-pages.sh"
+  skip_cleanup: true
+  on:
+    branch: master
     repo: watson-developer-cloud/android-sdk
     condition: "$API = android-19"
 - provider: bintray
