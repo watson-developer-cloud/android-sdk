@@ -32,4 +32,6 @@ public interface AudioConsumer {
    * @param data the data
    */
   void consume(byte[] data);
+
+  void setClosed(boolean closed);
 }

@@ -44,13 +44,13 @@ import com.ibm.watson.language_translator.v3.model.TranslationResult;
 import com.ibm.watson.language_translator.v3.util.Language;
 import com.ibm.watson.speech_to_text.v1.SpeechToText;
 import com.ibm.watson.speech_to_text.v1.model.RecognizeOptions;
+import com.ibm.watson.speech_to_text.v1.model.RecognizeWithWebsocketsOptions;
 import com.ibm.watson.speech_to_text.v1.model.SpeechRecognitionResults;
 import com.ibm.watson.speech_to_text.v1.websocket.BaseRecognizeCallback;
 import com.ibm.watson.speech_to_text.v1.websocket.RecognizeCallback;
 import com.ibm.watson.text_to_speech.v1.TextToSpeech;
 import com.ibm.watson.text_to_speech.v1.model.SynthesizeOptions;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity {
@@ -156,7 +156,6 @@ public class MainActivity extends AppCompatActivity {
               }
             }
           }).start();
-
           listening = true;
         } else {
           // Update the icon background
@@ -246,13 +245,14 @@ public class MainActivity extends AppCompatActivity {
     });
   }
 
-  private void enableMicButton() {
+  private void disableMicButton() {
     runOnUiThread(new Runnable() {
       @Override
       public void run() {
-        mic.setEnabled(true);
+        mic.setBackgroundColor(Color.LTGRAY);
       }
     });
+    listening = false;
   }
 
   private SpeechToText initSpeechToTextService() {
@@ -277,13 +277,13 @@ public class MainActivity extends AppCompatActivity {
     return service;
   }
 
-  private RecognizeOptions getRecognizeOptions(InputStream captureStream) {
-    return new RecognizeOptions.Builder()
+  private RecognizeWithWebsocketsOptions getRecognizeOptions(InputStream captureStream) {
+    return new RecognizeWithWebsocketsOptions.Builder()
             .audio(captureStream)
             .contentType(ContentType.OPUS.toString())
-            .model("en-US_BroadbandModel")
+            .model(RecognizeOptions.Model.EN_US_BROADBANDMODEL)
             .interimResults(true)
-            .inactivityTimeout(2000)
+            .inactivityTimeout(1)
             .build();
   }
 
@@ -311,6 +311,7 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private class MicrophoneRecognizeDelegate extends BaseRecognizeCallback implements RecognizeCallback {
+
     @Override
     public void onTranscription(SpeechRecognitionResults speechResults) {
       System.out.println(speechResults);
@@ -322,20 +323,19 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onError(Exception e) {
-      try {
-        // This is critical to avoid hangs
-        // (see https://github.com/watson-developer-cloud/android-sdk/issues/59)
-        capture.close();
-      } catch (IOException e1) {
-        e1.printStackTrace();
-      }
+      disableMicButton();
       showError(e);
-      enableMicButton();
     }
 
     @Override
     public void onDisconnected() {
-      enableMicButton();
+      super.onDisconnected();
+      disableMicButton();
+    }
+
+    @Override
+    public void onInactivityTimeout(RuntimeException runtimeException) {
+      super.onInactivityTimeout(runtimeException);
     }
   }
 

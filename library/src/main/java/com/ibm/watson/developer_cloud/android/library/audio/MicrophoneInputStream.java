@@ -19,8 +19,10 @@ import com.ibm.watson.developer_cloud.android.library.audio.utils.ContentType;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Captures raw audio data from the microphone and exposes it via an {@code InputStream}. Make sure {@link #close()}
@@ -34,11 +36,14 @@ public final class MicrophoneInputStream extends InputStream implements AudioCon
    */
   public final ContentType CONTENT_TYPE;
 
-  private final MicrophoneCaptureThread captureThread;
-  private final PipedOutputStream os;
-  private final PipedInputStream is;
+  private final Thread captureThread;
+  private final MicrophoneCaptureThread microphoneRunnable;
+  private PipedOutputStream os;
+  private PipedInputStream is;
 
   private AmplitudeListener amplitudeListener;
+
+  private boolean closed;
 
   /**
    * Instantiates a new microphone input stream.
@@ -46,7 +51,8 @@ public final class MicrophoneInputStream extends InputStream implements AudioCon
    * @param opusEncoded the opus encoded
    */
   public MicrophoneInputStream(boolean opusEncoded) {
-    captureThread = new MicrophoneCaptureThread(this, opusEncoded);
+    microphoneRunnable = new MicrophoneCaptureThread(this, opusEncoded);
+    captureThread = new Thread(microphoneRunnable);
     if (opusEncoded == true) {
       CONTENT_TYPE = ContentType.OPUS;
     } else {
@@ -54,10 +60,11 @@ public final class MicrophoneInputStream extends InputStream implements AudioCon
     }
     os = new PipedOutputStream();
     is = new PipedInputStream();
-    try {
+    try{
       is.connect(os);
-    } catch (IOException e) {
-      Log.e(TAG, e.getMessage());
+    }
+    catch (Exception e){
+      e.printStackTrace();
     }
     captureThread.start();
   }
@@ -106,9 +113,18 @@ public final class MicrophoneInputStream extends InputStream implements AudioCon
    */
   @Override
   public void close() throws IOException {
-    captureThread.end();
-    os.close();
-    is.close();
+    try {
+      closed = true;
+      microphoneRunnable.doStop();
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+    }
+    finally {
+      os.close();
+      is.close();
+    }
+
   }
 
   /**
@@ -123,11 +139,12 @@ public final class MicrophoneInputStream extends InputStream implements AudioCon
     if (amplitudeListener != null) {
       amplitudeListener.onSample(amplitude, volume);
     }
-
-    try {
-      os.write(data);
-    } catch (IOException e) {
-      Log.e(TAG, e.getMessage());
+    if (data != null && data.length != 0 && !closed) {
+      try {
+        os.write(data);
+      } catch (IOException e) {
+        Log.e(TAG, e.getMessage());
+      }
     }
   }
 
@@ -138,10 +155,15 @@ public final class MicrophoneInputStream extends InputStream implements AudioCon
    */
   @Override
   public void consume(byte[] data) {
-    try {
-      os.write(data);
-    } catch (IOException e) {
-      Log.e(TAG, e.getMessage());
+    if (data != null && data.length != 0 && !closed) {
+      try {
+        os.write(data);
+      } catch (IOException e) {
+        if (!closed) {
+          e.printStackTrace();
+          Log.e(TAG, "Error: " + e.getMessage());
+        }
+      }
     }
   }
 
@@ -152,6 +174,11 @@ public final class MicrophoneInputStream extends InputStream implements AudioCon
    */
   public void setOnAmplitudeListener(AmplitudeListener listener) {
     amplitudeListener = listener;
+  }
+
+  @Override
+  public void setClosed(boolean closed) {
+    this.closed = closed;
   }
 
   /**

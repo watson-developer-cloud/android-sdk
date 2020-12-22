@@ -78,6 +78,8 @@ public class OpusWriter extends AudioFileWriter {
    */
   private int frameSize;
 
+  private boolean closed;
+
   /**
    * Setting up the OggOpus Writer.
    */
@@ -146,23 +148,25 @@ public class OpusWriter extends AudioFileWriter {
     byte[] data;
     int chkSum;
 
-        /* writes the OGG header page */
-    header = buildOggPageHeader(2, 0, streamSerialNumber, pageCount++, 1, new byte[]{19});
-    data = buildOpusHeader(sampleRate);
-    chkSum = OggCrc.checksum(0, header, 0, header.length);
-    chkSum = OggCrc.checksum(chkSum, data, 0, data.length);
-    writeInt(header, 22, chkSum);
-    this.write(header);
-    this.write(data);
+    if(!closed) {
+          /* writes the OGG header page */
+      header = buildOggPageHeader(2, 0, streamSerialNumber, pageCount++, 1, new byte[]{19});
+      data = buildOpusHeader(sampleRate);
+      chkSum = OggCrc.checksum(0, header, 0, header.length);
+      chkSum = OggCrc.checksum(chkSum, data, 0, data.length);
+      writeInt(header, 22, chkSum);
+      this.write(header);
+      this.write(data);
 
-        /* Writes the OGG comment page */
-    header = buildOggPageHeader(0, 0, streamSerialNumber, pageCount++, 1, new byte[]{(byte) (comment.length() + 8)});
-    data = buildOpusComment(comment);
-    chkSum = OggCrc.checksum(0, header, 0, header.length);
-    chkSum = OggCrc.checksum(chkSum, data, 0, data.length);
-    writeInt(header, 22, chkSum);
-    this.write(header);
-    this.write(data);
+          /* Writes the OGG comment page */
+      header = buildOggPageHeader(0, 0, streamSerialNumber, pageCount++, 1, new byte[]{(byte) (comment.length() + 8)});
+      data = buildOpusComment(comment);
+      chkSum = OggCrc.checksum(0, header, 0, header.length);
+      chkSum = OggCrc.checksum(chkSum, data, 0, data.length);
+      writeInt(header, 22, chkSum);
+      this.write(header);
+      this.write(data);
+    }
   }
 
   /**
@@ -235,5 +239,13 @@ public class OpusWriter extends AudioFileWriter {
 
     this.audioConsumer.consume(tmp);
 
+  }
+
+  public void setClosed(boolean closed) {
+    this.closed = closed;
+  }
+
+  public boolean isClosed() {
+    return this.closed;
   }
 }
