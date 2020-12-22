@@ -6,6 +6,10 @@ android {
   configurations.all {
     resolutionStrategy.force 'com.android.support:support-annotations:23.0.1'
   }
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
 
   defaultConfig {
     applicationId "com.ibm.watson.developer_cloud.android.myapplication"
