@@ -42,6 +42,7 @@ public class OggOpusEnc extends OpusWriter {
    */
   private PointerByReference opusEncoder;
 
+  private boolean stop;
   /**
    * Constructor.
    *
@@ -71,6 +72,10 @@ public class OggOpusEnc extends OpusWriter {
    */
   public void onStart() {
     writer.writeHeader("encoder=Lavc56.20.100 libopus");
+  }
+
+  public void setClosed(boolean closed) {
+    writer.setClosed(closed);
   }
 
   /**
@@ -113,7 +118,9 @@ public class OggOpusEnc extends OpusWriter {
       if (opus_encoded > 0) {
         uploadedAudioSize += opusData.length;
         // System.out.println("This is where I'd write some data. " + uploadedAudioSize + " to be specific.");
-        writer.writePacket(opusData, 0, opusData.length);
+        if (!writer.isClosed()) {
+          writer.writePacket(opusData, 0, opusData.length);
+        }
       }
     }
 
