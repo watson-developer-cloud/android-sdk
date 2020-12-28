@@ -6,6 +6,10 @@ android {
   configurations.all {
     resolutionStrategy.force 'com.android.support:support-annotations:23.0.1'
   }
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
 
   defaultConfig {
     applicationId "com.ibm.watson.developer_cloud.android.myapplication"
@@ -28,6 +32,7 @@ android {
   lintOptions {
     abortOnError false
   }
+  buildToolsVersion '28.0.3'
 }
 
 dependencies {
@@ -41,7 +46,7 @@ dependencies {
   }
   implementation 'com.android.support:appcompat-v7:28.0.0'
   implementation 'com.android.support:multidex:1.0.3'
-  implementation ('com.ibm.watson:ibm-watson:8.0.0') {
+  implementation ('com.ibm.watson:ibm-watson:9.0.2') {
     exclude group: 'com.google.code.findbugs', module: 'annotations'
   }
   implementation project(':library')
