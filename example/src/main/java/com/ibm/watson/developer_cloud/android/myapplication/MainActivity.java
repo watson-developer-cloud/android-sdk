@@ -283,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
             .contentType(ContentType.OPUS.toString())
             .model(RecognizeOptions.Model.EN_US_BROADBANDMODEL)
             .interimResults(true)
-            .inactivityTimeout(1)
+            .inactivityTimeout(-1)
             .build();
   }
 
